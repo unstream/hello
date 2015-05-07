@@ -3,6 +3,8 @@ package com.test.hello;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,9 +38,21 @@ public class HelloController {
     }
     
     @RequestMapping("/greeting")
-    public String greeting(@RequestParam(value="name", required=false, defaultValue="att&amp;ack:\nbla") String name, Model model) {
+    public String greeting(@RequestParam(value="name", required=false, defaultValue="Ingo") String name, Model model) {
         model.addAttribute("name", name);
+    	model.addAttribute("page", "greeting");
         return "greeting";
+    }
+    @RequestMapping("/about")
+    public String about(@RequestParam(value="name", required=false, defaultValue="att&amp;ack:\nbla") String name, Model model) {
+        model.addAttribute("name", name);
+    	model.addAttribute("page", "about");
+        return "about";
+    }
+    @RequestMapping("/contact")
+    public String contact(Model model) {
+    	model.addAttribute("page", "contact");
+        return "contact";
     }
 
 }
