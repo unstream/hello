@@ -3,8 +3,6 @@ package com.test.hello;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +18,18 @@ public class HelloController {
         return "Greetings from Spring Boot!";
     }
 
-    @RequestMapping("/listuser/")
-    public List<User> listUsers() {
-    	List<User> users = new ArrayList<User>();
+    @RequestMapping("/listusers")
+    public String listUsers(Model model) {
+    	List<User> users;
+    	
+    	users = initUsers();
+    	model.addAttribute("users", users);
+    	return "listusers";
+    }
+
+	private List<User> initUsers() {
+		List<User> users;
+		users = new ArrayList<User>();
     	
     	User u1 = new User();
     	u1.setFirstName("Ingo");
@@ -33,9 +40,8 @@ public class HelloController {
     	u2.setFirstName("Ada");
     	u2.setLastName("Stopperich");
     	users.add(u2);
-
-    	return users;
-    }
+		return users;
+	}
     
     @RequestMapping("/greeting")
     public String greeting(@RequestParam(value="name", required=false, defaultValue="Ingo") String name, Model model) {
