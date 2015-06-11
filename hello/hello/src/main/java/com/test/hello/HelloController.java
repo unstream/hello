@@ -3,19 +3,34 @@ package com.test.hello;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import net.unstream.mandelbrot.MandelbrotService;
+import net.unstream.mandelbrot.MandelbrotServiceException;
+import net.unstream.mandelbrot.MandelbrotServiceImpl;
+
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.test.hello.domain.Fractal;
 import com.test.hello.domain.User;
 
 @Controller
 public class HelloController {
+	
+	@Inject
+	MandelbrotService mService;
 
     @RequestMapping("/")
     public String index() {
-        return "Greetings from Spring Boot!";
+        return "greeting";
     }
 
     @RequestMapping("/listusers")
@@ -27,6 +42,78 @@ public class HelloController {
     	return "listusers";
     }
 
+    @RequestMapping("/mandelbrot")
+    public String mandelbrot(
+    		Fractal fractal, final BindingResult bindingResult, 
+    		HttpServletRequest request,
+    		Model model) {
+    	model.addAttribute("page", "mandelbrot");
+    	
+    	Fractal oldFractal = null;
+    	oldFractal = (Fractal) request.getSession().getAttribute("fractal");
+		if (oldFractal == null) {
+			oldFractal = new Fractal(); 
+		}
+
+		if (fractal == null) {
+			fractal = new Fractal();
+		}
+
+		request.getSession().setAttribute("fractal", fractal);
+		model.addAttribute("fractal", fractal);
+    	return "mandelbrot";
+    }
+
+    @RequestMapping("/mandelbrot2")
+    public String mandelbrot2(
+    		@RequestParam(required = false) final Integer x1,
+    		@RequestParam(required = false) final Integer y1,
+    		@RequestParam(required = false) final Integer x2,
+    		@RequestParam(required = false) final Integer y2,
+    		@RequestParam(required = false) final Integer iterations,
+    		HttpServletRequest request,
+    		Model model) {
+    	model.addAttribute("page", "mandelbrot");
+    	Fractal fractal = null;
+    	
+    	Fractal oldFractal = null;
+    	oldFractal = (Fractal) request.getSession().getAttribute("fractal");
+		if (oldFractal == null) {
+			oldFractal = new Fractal(); 
+		}
+
+    	if ((x1 == null) || (y1 == null) || (x2 == null) || (y2 == null)) {
+    		fractal = oldFractal;
+    	} else {
+    		double fWidth = oldFractal.getC1() - oldFractal.getC0();
+    		fractal = new Fractal();
+    		fractal.setC0(oldFractal.getC0() + fWidth * x1 / 500d);
+    		fractal.setC0i(oldFractal.getC0i() + fWidth * y1 / 500d);
+    		fractal.setC1(oldFractal.getC0() + fWidth * x2 / 500d);
+    		fractal.setC1i(oldFractal.getC0i() + fWidth * y2 / 500d);
+    	}
+    	if (iterations != null) {
+    		fractal.setIterations(iterations);
+    	}
+    	request.getSession().setAttribute("fractal", fractal);
+		model.addAttribute("fractal", fractal);
+    	return "mandelbrot";
+    }
+
+    @RequestMapping(value = "/getMandelbrotImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] getMandelbrotImage(
+    		@RequestParam("c0") final double c0,
+    		@RequestParam("c0i") final double c0i,
+    		@RequestParam("c1") final double c1,
+    		@RequestParam("c1i") final double c1i,
+    		@RequestParam("iterations") final int iterations
+    		) throws MandelbrotServiceException {
+
+    	return mService.computeMandelBrotPng(c0, c0i, c1, c1i, iterations, 500);
+
+    }
+    
 	private List<User> initUsers() {
 		List<User> users;
 		users = new ArrayList<User>();
