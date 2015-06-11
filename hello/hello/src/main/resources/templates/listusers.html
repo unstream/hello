@@ -63,15 +63,18 @@
       
       <div class="panel panel-default">
   		<!-- Default panel contents -->
-  		<div class="panel-heading">Panel heading</div>
+  		<div class="panel-heading">A list of all the users of this web site...</div>
 
 			<!-- Table -->
   			<table class="table">
-				<thead>
-					<tr><td>Id</td><td>First name</td><td>Last name</td></tr>
-				</thead>
-					<tr><td>1</td><td>Ingo</td><td>Weichsel</td></tr>
-					<tr><td>2</td><td>Thomas</td><td>Humbug</td></tr>
+					<tr>
+						<td>First name</td>
+						<td>Last name</td>
+					</tr>
+					<tr th:each="user : ${users}">
+						<td th:text="${user.firstName}">Ingo</td>
+						<td th:text="${user.lastName}">Weichsel</td>
+					</tr>
   			</table>
 		</div>
 
