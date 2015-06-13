@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.unstream.mandelbrot.MandelbrotService;
 import net.unstream.mandelbrot.MandelbrotServiceException;
-import net.unstream.mandelbrot.MandelbrotServiceImpl;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -60,42 +59,6 @@ public class HelloController {
 		}
 
 		request.getSession().setAttribute("fractal", fractal);
-		model.addAttribute("fractal", fractal);
-    	return "mandelbrot";
-    }
-
-    @RequestMapping("/mandelbrot2")
-    public String mandelbrot2(
-    		@RequestParam(required = false) final Integer x1,
-    		@RequestParam(required = false) final Integer y1,
-    		@RequestParam(required = false) final Integer x2,
-    		@RequestParam(required = false) final Integer y2,
-    		@RequestParam(required = false) final Integer iterations,
-    		HttpServletRequest request,
-    		Model model) {
-    	model.addAttribute("page", "mandelbrot");
-    	Fractal fractal = null;
-    	
-    	Fractal oldFractal = null;
-    	oldFractal = (Fractal) request.getSession().getAttribute("fractal");
-		if (oldFractal == null) {
-			oldFractal = new Fractal(); 
-		}
-
-    	if ((x1 == null) || (y1 == null) || (x2 == null) || (y2 == null)) {
-    		fractal = oldFractal;
-    	} else {
-    		double fWidth = oldFractal.getC1() - oldFractal.getC0();
-    		fractal = new Fractal();
-    		fractal.setC0(oldFractal.getC0() + fWidth * x1 / 500d);
-    		fractal.setC0i(oldFractal.getC0i() + fWidth * y1 / 500d);
-    		fractal.setC1(oldFractal.getC0() + fWidth * x2 / 500d);
-    		fractal.setC1i(oldFractal.getC0i() + fWidth * y2 / 500d);
-    	}
-    	if (iterations != null) {
-    		fractal.setIterations(iterations);
-    	}
-    	request.getSession().setAttribute("fractal", fractal);
 		model.addAttribute("fractal", fractal);
     	return "mandelbrot";
     }
