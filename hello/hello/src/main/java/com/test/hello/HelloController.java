@@ -1,14 +1,22 @@
 package com.test.hello;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import net.unstream.mandelbrot.Fractal;
 import net.unstream.mandelbrot.MandelbrotService;
 import net.unstream.mandelbrot.MandelbrotServiceException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.test.hello.domain.Fractal;
 import com.test.hello.domain.User;
 
 @Controller
@@ -26,6 +33,8 @@ public class HelloController {
 	
 	@Inject
 	MandelbrotService mService;
+	
+	private final static Logger LOG = LoggerFactory.getLogger(HelloController.class);
 
     @RequestMapping("/")
     public String index() {
@@ -48,32 +57,43 @@ public class HelloController {
     		Model model) {
     	model.addAttribute("page", "mandelbrot");
     	
-    	Fractal oldFractal = null;
-    	oldFractal = (Fractal) request.getSession().getAttribute("fractal");
-		if (oldFractal == null) {
-			oldFractal = new Fractal(); 
-		}
-
+    	HttpSession session = request.getSession();
 		if (fractal == null) {
-			fractal = new Fractal();
+			fractal = (Fractal) session.getAttribute("fractal");
+			if (fractal == null) {
+				fractal = new Fractal(); 
+			}
 		}
 
-		request.getSession().setAttribute("fractal", fractal);
+		session.setAttribute("fractal", fractal);
+		final String imgId = UUID.randomUUID().toString();
+		long oldTime = System.currentTimeMillis();
+		session.setAttribute(imgId, mService.computeMandelBrotPng(fractal));
+		long time = System.currentTimeMillis();
+		long delta = time - oldTime;
+		LOG.debug("Async call time: " + delta + "ms");
 		model.addAttribute("fractal", fractal);
+		model.addAttribute("imgId", imgId);
     	return "mandelbrot";
     }
 
     @RequestMapping(value = "/getMandelbrotImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
-    public byte[] getMandelbrotImage(
-    		@RequestParam("c0") final double c0,
-    		@RequestParam("c0i") final double c0i,
-    		@RequestParam("c1") final double c1,
-    		@RequestParam("c1i") final double c1i,
-    		@RequestParam("iterations") final int iterations
-    		) throws MandelbrotServiceException {
+    public byte[] getMandelbrotImage(String imgId, HttpServletRequest request) throws MandelbrotServiceException, InterruptedException, ExecutionException {
+    	Future<byte[]> imgFuture = (Future<byte[]>) request.getSession().getAttribute(imgId);
+    	if (imgFuture == null) {
+    		throw new SecurityException("Invalid image id.");
+    	}
+    	byte[] img = imgFuture.get();
+    	return img;
 
-    	return mService.computeMandelBrotPng(c0, c0i, c1, c1i, iterations, 500);
+    }
+
+    @RequestMapping(value = "/colorMapImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] colorMapImage(String color1, String color2, String color3, HttpServletRequest request) throws MandelbrotServiceException, InterruptedException, ExecutionException {
+    	byte[] img = mService.computeColorGradientPng(Color.decode(color1), Color.decode(color2), Color.decode(color3));
+    	return img;
 
     }
     

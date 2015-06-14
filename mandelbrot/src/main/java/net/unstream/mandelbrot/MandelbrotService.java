@@ -1,5 +1,10 @@
 package net.unstream.mandelbrot;
 
+import java.awt.Color;
+import java.util.concurrent.Future;
+
+import org.springframework.scheduling.annotation.Async;
+
 /**
  * Service to create images of the Mandelbrot set.
  *
@@ -8,14 +13,17 @@ public interface MandelbrotService {
 	/**
 	 * 
 	 * Compute a PNG image of the Mandelbrot set between the complex numbers C0 and C1.
-	 * @param c0  real part of C0
-	 * @param c0i imaginary part of C0
-	 * @param c1  real part of C1
-	 * @param c1i imaginary part of C1
-	 * @param iterations maximum number of iteration before the computation should be stopped
-	 * @param width of the created image
-	 * @return PNG image
-	 * @throws MandelbrotServiceException if something goes wrong when creating the image.
+	 * @param fractal properties of the fractal to create
+	 * @return Future PNG image
 	 */
-	byte [] computeMandelBrotPng(double c0, double c0i, double c1, double c1i, int iterations, int width) throws MandelbrotServiceException;
+	@Async
+	Future<byte []> computeMandelBrotPng(final Fractal fractal);
+	
+	/**
+	 * Create an image with the color map of height one.
+	 * @param fractal containing the colors used for the map
+	 * @return PNG image with the color gradient
+	 * @throws MandelbrotServiceException
+	 */
+	byte[] computeColorGradientPng(final Color... colors) throws MandelbrotServiceException;
 }

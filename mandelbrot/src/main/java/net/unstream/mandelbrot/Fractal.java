@@ -1,16 +1,16 @@
-package com.test.hello.domain;
+package net.unstream.mandelbrot;
 
 public class Fractal {
-	double c0 = -1.5d;
-	double c0i = -1d;
-	double c1 = 0.5d;
-	double c1i = 1d;
-	int width = 500;
-	int height = 500;
-	int iterations = 100;
-	String color1 = "#000000";
-	String color2 = "#00aabb";
-	String color3 = "#ffffff";
+	private double c0 = -1.5d;
+	private double c0i = -1d;
+	private double c1 = 0.5d;
+	private double c1i = 1d;
+	private int width = 500;
+	private int height = 500;
+	private int iterations = 100;
+	private String color1 = "#000000";
+	private String color2 = "#00aabb";
+	private String color3 = "#ffffff";
 
 	public String getColor1() {
 		return color1;

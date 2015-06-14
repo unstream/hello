@@ -66,7 +66,7 @@
 		<div class="row">
 			<div class="col-md-6" >
 				<img id="zoom_01" class="img-responsive"
-					th:attr="src=@{/getMandelbrotImage(c0=${fractal.c0},c0i=${fractal.c0i},c1=${fractal.c1},c1i=${fractal.c1i},iterations=${fractal.iterations} )}" />
+					th:attr="src=@{/getMandelbrotImage(imgId=${imgId})}" />
 			</div>
 			<div class="col-md-4" >
 
@@ -74,6 +74,13 @@
 					<div class="panel-body">
 
 						<form class="form-horizontal" method="get">
+							<span id="colormap" class="btn btn-default col-md-12" style="cursor: default" >&nbsp;</span>
+<!--
+ 								<img id="map" class="img-responsive col-md-12 img-rounded" style="height: 25px"
+										th:attr="src=@{/colorMapImage(color1=${fractal.color1},color2=${fractal.color2},color3=${fractal.color3})}" />
+ -->
+							<div class="form-group">
+							</div>
 
 							<div class="form-group">
 								<label for="iterations" class="col-md-6 control-label">Color 1</label>
@@ -198,7 +205,12 @@
 							<script th:inline="javascript">
 							/*<![CDATA[*/
 							    $(function(){
-							        $('.colors').colorpicker();
+							        $('.colors').colorpicker({format: 'hex'}).on('changeColor', function(event) {
+						                $('#colormap').css(	'background', 
+						                					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
+						            });
+					                $('#colormap').css(	'background', 
+		                					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
 							    });
 							/*]]>*/
 							</script>
