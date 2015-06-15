@@ -74,51 +74,27 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 		}
 		
 	}
-
 	
 	private BufferedImage createMandelBrotImage(Fractal fractal) {
-		final Complex c0 = new Complex(fractal.getC0(), fractal.getC0i());
-		final Complex c1 = new Complex(fractal.getC1(), fractal.getC1i());
-		final int width = fractal.getWidth();
-
-		final BufferedImage image = new BufferedImage(width, width, BufferedImage.TYPE_3BYTE_BGR);
-        final double xStep = c1.subtract(c0).getReal() / width;
-        final double yStep = c1.subtract(c0).getImaginary() / width;
-                 
-        class Line {
-        	public Line(int myY) {
-				this.y = myY;
-			}
-			int y;
-        	int [] line;
-        }
-        Color[] colorMap = generateColorMap(
+		final BufferedImage image = new BufferedImage(fractal.getWidth(), fractal.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		Color[] colorMap = generateColorMap(
         		Color.decode(fractal.getColor1()),
         		Color.decode(fractal.getColor2()),
         		Color.decode(fractal.getColor3())
         );
-        
-        Set<Line> lines = new HashSet<Line>();
-        for (int y = 0; y < width; y++) {
-        	lines.add(new Line(y));
-        }
-        lines.parallelStream().forEach((line) -> {
-        	double ic = yStep * line.y;
-        	line.line = new int[width];
-        	for (int x = 0; x < width; x++) {             	
-				Complex c = c0.add(new Complex(xStep * x, ic));
-				double nsmooth = iterate(c, fractal.getIterations());
+        Map<Integer, double[]> lines = MandelBrot.compute(fractal);
 
-				Color color = mapColor(nsmooth, colorMap, fractal);
-				line.line[x] = color.getRGB();
-        	}        	
-        });
-        for (Line line: lines) {
-        	image.setRGB(0, line.y, width, 1, line.line, 0, width);
+        for (int y: lines.keySet()) {
+        	for (int x = 0; x < fractal.getWidth(); x++) {
+        		double nsmooth = lines.get(y)[x];
+        		Color color = mapColor(nsmooth, colorMap, fractal);
+        		image.setRGB(x, y, color.getRGB());
+        	}
         }
 		return image;
 	}
 
+	
 	private Color mapColor(final double nsmooth, final Color[] colorMap, final Fractal fractal) {
 		int i = (int) Math.round(1d * nsmooth * colorMap.length / fractal.getIterations());
 		if (i < 0) {
@@ -145,25 +121,5 @@ public class MandelbrotServiceImpl implements MandelbrotService {
         }
 		return colorMap;
 	}
-			
-	private double iterate(final Complex c, final int maxIterations) {
-		int i = 0;
-		double x = 0;
-		double y = 0;
-		double x2, y2;
-		do {
-			x2 = x * x;
-			y2 = y * y;
-			y = 2 * x * y + c.getImaginary();
-			x = x2 - y2 + c.getReal();
-			i++;
-		} while (i < maxIterations && (x2 + y2) < 4);
-		double nsmooth;
-		if (i == maxIterations) {
-			nsmooth = i;
-		} else {
-			nsmooth = 1d + i - Math.log(Math.log(Math.sqrt(x*x + y*y)))/Math.log(2);
-		}
-		return nsmooth;
-	}
+	
 }
