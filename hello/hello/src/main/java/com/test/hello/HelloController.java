@@ -12,13 +12,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import net.unstream.mandelbrot.Fractal;
+import net.unstream.mandelbrot.FractalRepository;
 import net.unstream.mandelbrot.MandelbrotService;
 import net.unstream.mandelbrot.MandelbrotServiceException;
 
+import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,10 +39,35 @@ public class HelloController {
 	@Inject
 	MandelbrotService mService;
 	
+	@Autowired GraphDatabase graphDatabase;
+	@Autowired FractalRepository fractalRepository;
+
+
+	
 	private final static Logger LOG = LoggerFactory.getLogger(HelloController.class);
 
     @RequestMapping("/")
     public String index() {
+        return "redirect: /listFractals";
+    }
+    
+    @RequestMapping("/listFractals")
+    @Transactional
+    public String listFractals(Model model) {
+        model.addAttribute("page", "listFractals");
+    	List<Fractal> fractals = new ArrayList<Fractal>();
+    	
+		Transaction tx = graphDatabase.beginTx();
+		try {
+	    	Iterable<Fractal> iterable = fractalRepository.findAll();
+	    	for (Fractal fractal : iterable) {
+	    		fractals.add(fractal);
+	    	}
+			tx.success();
+		} finally {
+			tx.close();
+		}
+		model.addAttribute("fractals", fractals);
         return "greeting";
     }
 
@@ -52,11 +82,13 @@ public class HelloController {
 
     @RequestMapping("/mandelbrot")
     public String mandelbrot(
-    		Fractal fractal, final BindingResult bindingResult, 
+    		Fractal fractal, final boolean reset, final BindingResult bindingResult, 
     		HttpServletRequest request,
     		Model model) {
     	model.addAttribute("page", "mandelbrot");
-    	
+    	if (reset) {
+    		fractal = new Fractal();
+    	}
     	HttpSession session = request.getSession();
 		if (fractal == null) {
 			fractal = (Fractal) session.getAttribute("fractal");
@@ -77,6 +109,44 @@ public class HelloController {
     	return "mandelbrot";
     }
 
+    @RequestMapping("/mandelbrot/save")
+    public String mandelbrotSave(
+    		Fractal fractal, final BindingResult bindingResult, 
+    		HttpServletRequest request,
+    		Model model) {
+    	model.addAttribute("page", "mandelbrot");
+
+    	
+		Transaction tx = graphDatabase.beginTx();
+		try {
+			fractalRepository.save(fractal);
+			tx.success();
+		} finally {
+			tx.close();
+		}
+
+    	HttpSession session = request.getSession();
+		if (fractal == null) {
+			fractal = (Fractal) session.getAttribute("fractal");
+			if (fractal == null) {
+				fractal = new Fractal(); 
+			}
+		}
+
+		session.setAttribute("fractal", fractal);
+		final String imgId = UUID.randomUUID().toString();
+		long oldTime = System.currentTimeMillis();
+		session.setAttribute(imgId, mService.computeMandelBrotPng(fractal));
+		long time = System.currentTimeMillis();
+		long delta = time - oldTime;
+		LOG.debug("Async call time: " + delta + "ms");
+		model.addAttribute("fractal", fractal);
+		model.addAttribute("imgId", imgId);
+    	return "redirect:/mandelbrot";
+    }
+
+    
+    
     @RequestMapping(value = "/getMandelbrotImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public byte[] getMandelbrotImage(String imgId, HttpServletRequest request) throws MandelbrotServiceException, InterruptedException, ExecutionException {
@@ -119,6 +189,7 @@ public class HelloController {
     	model.addAttribute("page", "greeting");
         return "greeting";
     }
+    
     @RequestMapping("/about")
     public String about(@RequestParam(value="name", required=false, defaultValue="att&amp;ack:\nbla") String name, Model model) {
         model.addAttribute("name", name);

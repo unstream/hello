@@ -55,10 +55,43 @@
 		</nav>
 	</div>
 
-	<div class="container">
-		<div class="starter-template">
-			<h1>Mandelbrot Set</h1>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Save this Mandelbrot Set</h4>
+				</div>
+				<div class="modal-body">
+					<form id="save-form">
+						<div class="form-group">
+							<label for="nameInput">Name</label> <input
+								type="text" class="form-control" id="nameInput"
+								placeholder="Name" required="required"/>
+						</div>
+						<div class="form-group">
+							<label for="descriptionText">Description</label><textarea id="descriptionTextarea" 
+									class="form-control" rows="3" 
+									placeholder="Enter a description for this fractal image..."></textarea>
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="submit" id="save-modal-submit" form="fractal-form"  formaction="../mandelbrot/save" th:formaction="@{/mandelbrot/save}" class="btn btn-primary">Save</button>
+				</div>
+			</div>
 		</div>
+	</div>
+
+	<div class="container">
+		<div class="col-xs-12" style="height:20px;"></div>
 				
 		<div class="row">
 			<div class="col-md-6" >
@@ -70,7 +103,9 @@
 				<div class="panel panel-default">
 					<div class="panel-body">
 
-						<form class="form-horizontal" method="get">
+						<form id="fractal-form" class="form-horizontal" method="get">
+							<input type="hidden" id="nameHidden" name="name" th:attr="value=${fractal.name}"/>
+							<input type="hidden" id="descriptionHidden" name="description" th:attr="value=${fractal.description}"/>							
 							<span id="colormap" class="btn btn-default col-md-12" style="cursor: default" >&nbsp;</span>
 
 							<div class="form-group">
@@ -146,8 +181,15 @@
 										th:attr="value=${fractal.c1i}" value="1"  />
 								</div>
 							</div>
-							<button type="submit" class="btn btn-primary col-md-12">Submit</button>
+							<div class="btn-toolbar">
+								<button type="submit" class="btn btn-primary col-md-3 pull-right">Submit</button>
+								<button type="submit" form="formreset" class="btn btn-default col-md-3 pull-right">Reset</button>
+								<a href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" data-toggle="modal">Save</a>
 
+							</div>
+						</form>
+						<form method="get" id="formreset">
+							<input type="hidden" name="reset" value="true"/>
 						</form>
 					</div>
 				</div>
@@ -156,14 +198,32 @@
 		</div>
 
 	</div>
-
 	<!-- /.container -->
+
 
 
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
+
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	$(document).ready(function() {
+		$('#save-modal-submit').click(function() {
+			if ($('#nameInput').val() === "") {
+				// invalid
+				//$('#nameInput').next('.help-inline').show();
+				return false;
+			} else {
+				 $('#nameHidden').val($('#nameInput').val());
+				 $('#descriptionHidden').val($('#descriptionInput').val());
+			}
+		});
+	});
+	/*]]>*/
+	</script>
+
 
 	<script th:src="@{/js/jquery.imgareaselect.dev.js }" type="text/javascript" src="../static/js/jquery.imgareaselect.dev.js"></script>
 	<script th:inline="javascript">
