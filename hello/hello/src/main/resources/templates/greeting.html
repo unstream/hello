@@ -57,20 +57,27 @@
       
       <div class="panel panel-default">
   		<!-- Default panel contents -->
-  		<div class="panel-heading">Panel heading</div>
+  		<div class="panel-heading">Saved Mandelbrot Set images</div>
 
 			<!-- Table -->
   			<table class="table table-striped">
   				<thead>
 					<tr>
+						<th></th>
 						<th>Name</th>
 						<th>Description</th>
+						<th>Rating</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="fractal : ${fractals}">
+					
+						<td><img th:if="${fractal.imageUUID != null}" id="fractal" th:id="fractal + ${fractal.id}"  height="64" width="64" src="../static/mandelbrot.png"
+					th:attr="src=@{/getMandelbrotImage(imgId=${fractal.imageUUID})}" />
+						</td>
 						<td th:text="${fractal.name}">Complete Mandelbrot</td>
 						<td th:text="${fractal.description}">The complete Mandelbrot Set in blue.</td>
+						<td><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span></td>
 					</tr>
 				</tbody>
   			</table>

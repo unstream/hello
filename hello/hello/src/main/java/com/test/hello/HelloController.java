@@ -53,7 +53,7 @@ public class HelloController {
     
     @RequestMapping("/listFractals")
     @Transactional
-    public String listFractals(Model model) {
+    public String listFractals(Model model, HttpServletRequest request) {
         model.addAttribute("page", "listFractals");
     	List<Fractal> fractals = new ArrayList<Fractal>();
     	
@@ -62,6 +62,9 @@ public class HelloController {
 	    	Iterable<Fractal> iterable = fractalRepository.findAll();
 	    	for (Fractal fractal : iterable) {
 	    		fractals.add(fractal);
+	    		if (fractal.getImage() != null) {
+		    		request.getSession().setAttribute(fractal.getImageUUID(), fractal.getImage());
+	    		}
 	    	}
 			tx.success();
 		} finally {
@@ -101,11 +104,11 @@ public class HelloController {
 		final String imgId = UUID.randomUUID().toString();
 		long oldTime = System.currentTimeMillis();
 		session.setAttribute(imgId, mService.computeMandelBrotPng(fractal));
+		fractal.setImageUUID(imgId);
 		long time = System.currentTimeMillis();
 		long delta = time - oldTime;
 		LOG.debug("Async call time: " + delta + "ms");
 		model.addAttribute("fractal", fractal);
-		model.addAttribute("imgId", imgId);
     	return "mandelbrot";
     }
 
@@ -114,34 +117,21 @@ public class HelloController {
     		Fractal fractal, final BindingResult bindingResult, 
     		HttpServletRequest request,
     		Model model) {
-    	model.addAttribute("page", "mandelbrot");
-
-    	
+    	HttpSession session = request.getSession();
 		Transaction tx = graphDatabase.beginTx();
 		try {
+			byte [] img = ((Future<byte[]>) session.getAttribute(fractal.getImageUUID())).get();
+			fractal.setImage(img);
 			fractalRepository.save(fractal);
 			tx.success();
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			tx.close();
 		}
-
-    	HttpSession session = request.getSession();
-		if (fractal == null) {
-			fractal = (Fractal) session.getAttribute("fractal");
-			if (fractal == null) {
-				fractal = new Fractal(); 
-			}
-		}
-
-		session.setAttribute("fractal", fractal);
-		final String imgId = UUID.randomUUID().toString();
-		long oldTime = System.currentTimeMillis();
-		session.setAttribute(imgId, mService.computeMandelBrotPng(fractal));
-		long time = System.currentTimeMillis();
-		long delta = time - oldTime;
-		LOG.debug("Async call time: " + delta + "ms");
+//		session.setAttribute("fractal", fractal);
 		model.addAttribute("fractal", fractal);
-		model.addAttribute("imgId", imgId);
     	return "redirect:/mandelbrot";
     }
 
@@ -150,13 +140,17 @@ public class HelloController {
     @RequestMapping(value = "/getMandelbrotImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     public byte[] getMandelbrotImage(String imgId, HttpServletRequest request) throws MandelbrotServiceException, InterruptedException, ExecutionException {
-    	Future<byte[]> imgFuture = (Future<byte[]>) request.getSession().getAttribute(imgId);
-    	if (imgFuture == null) {
+    	byte[] img = null;
+    	Object idObject = request.getSession().getAttribute(imgId);
+    	if (idObject instanceof byte []) {
+    		img = (byte []) idObject;
+    	} else if (idObject instanceof Future<?>) {
+    		Future<byte[]> imgFuture = (Future<byte[]>) idObject;
+        	img = imgFuture.get();
+    	} else {
     		throw new SecurityException("Invalid image id.");
     	}
-    	byte[] img = imgFuture.get();
     	return img;
-
     }
 
     @RequestMapping(value = "/colorMapImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)

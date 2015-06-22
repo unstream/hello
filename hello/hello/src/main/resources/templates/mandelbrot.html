@@ -96,7 +96,7 @@
 		<div class="row">
 			<div class="col-md-6" >
 				<img id="zoom_01" class="img-responsive" src="../static/mandelbrot.png"
-					th:attr="src=@{/getMandelbrotImage(imgId=${imgId})}" />
+					th:attr="src=@{/getMandelbrotImage(imgId=${fractal.imageUUID})}" />
 			</div>
 			<div class="col-md-4" >
 
@@ -106,6 +106,7 @@
 						<form id="fractal-form" class="form-horizontal" method="get">
 							<input type="hidden" id="nameHidden" name="name" th:attr="value=${fractal.name}"/>
 							<input type="hidden" id="descriptionHidden" name="description" th:attr="value=${fractal.description}"/>							
+							<input type="hidden" id="imageUUIDHidden" name="imageUUID" th:attr="value=${fractal.imageUUID}"/>							
 							<span id="colormap" class="btn btn-default col-md-12" style="cursor: default" >&nbsp;</span>
 
 							<div class="form-group">

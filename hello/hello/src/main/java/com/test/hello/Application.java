@@ -5,6 +5,7 @@ import java.io.File;
 import net.unstream.mandelbrot.FractalRepository;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.kernel.impl.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -34,9 +35,9 @@ public class Application {
 		@Bean
 		GraphDatabaseService graphDatabaseService() {
 			//http://hellofractal.sb04.stations.graphenedb.com:24789/
-			return new SpringRestGraphDatabase("http://hellofractal.sb04.stations.graphenedb.com:24789/db/data/", 
-					"hellofractal", "CnPxncpPKb9jnoXjf4My");
-			//return new GraphDatabaseFactory().newEmbeddedDatabase("accessingdataneo4j.db");
+//			return new SpringRestGraphDatabase("http://hellofractal.sb04.stations.graphenedb.com:24789/db/data/", 
+//					"hellofractal", "CnPxncpPKb9jnoXjf4My");
+			return new GraphDatabaseFactory().newEmbeddedDatabase("accessingdataneo4j.db");
 		}
 	}
 

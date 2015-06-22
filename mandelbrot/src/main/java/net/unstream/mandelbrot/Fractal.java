@@ -23,8 +23,10 @@ public class Fractal {
 	private String color1 = "#000000";
 	private String color2 = "#00aabb";
 	private String color3 = "#ffffff";
+	private String imageUUID = null;
+	private byte [] image = null;
 
-    @RelatedTo(type="Parent", direction=Direction.OUTGOING)
+	@RelatedTo(type="Parent", direction=Direction.OUTGOING)
     public @Fetch Fractal parent;
 	
 	public String getColor1() {
@@ -112,5 +114,17 @@ public class Fractal {
 		this.parent = parent;
 	}
 
+    public byte[] getImage() {
+		return image;
+	}
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+	public String getImageUUID() {
+		return imageUUID;
+	}
+	public void setImageUUID(String imageUUID) {
+		this.imageUUID = imageUUID;
+	}
 	
 }
