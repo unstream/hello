@@ -21,15 +21,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.core.GraphDatabase;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.test.hello.domain.User;
 
@@ -111,30 +115,37 @@ public class HelloController {
 		model.addAttribute("fractal", fractal);
     	return "mandelbrot";
     }
-
-    @RequestMapping("/mandelbrot/save")
-    public String mandelbrotSave(
-    		Fractal fractal, final BindingResult bindingResult, 
-    		HttpServletRequest request,
-    		Model model) {
-    	HttpSession session = request.getSession();
-		Transaction tx = graphDatabase.beginTx();
-		try {
-			byte [] img = ((Future<byte[]>) session.getAttribute(fractal.getImageUUID())).get();
-			fractal.setImage(img);
-			fractalRepository.save(fractal);
-			tx.success();
-		} catch (InterruptedException | ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			tx.close();
-		}
-//		session.setAttribute("fractal", fractal);
+    
+    @RequestMapping("/mandelbrot/read/{id}")
+	public String mandelbrotSave(@PathVariable long id, Model model) {
+		Fractal fractal = fractalRepository.findById(id);
 		model.addAttribute("fractal", fractal);
-    	return "redirect:/mandelbrot";
+    	model.addAttribute("page", "mandelbrot");
+		return "mandelbrot";
     }
 
+    @RequestMapping("/mandelbrot/save")
+    @Transactional
+    public String mandelbrotSave(
+		Fractal fractal, 
+		HttpServletRequest request,
+		Model model) throws ExecutionException, InterruptedException {
+    	HttpSession session = request.getSession();
+		byte [] img = ((Future<byte[]>) session.getAttribute(fractal.getImageUUID())).get();
+		fractal.setImage(img);
+		fractalRepository.save(fractal);
+		model.addAttribute("fractal", fractal);
+    	model.addAttribute("page", "mandelbrot");
+		return "mandelbrot";
+    }
+
+    @RequestMapping(value="/mandelbrot/delete/{id}", method=RequestMethod.DELETE, //produces = MediaType.APPLICATION_JSON_VALUE,
+    		consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @Transactional
+    public void mandelbrotSave(@PathVariable long id) {
+    	fractalRepository.delete(id);
+    }
     
     
     @RequestMapping(value = "/getMandelbrotImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)

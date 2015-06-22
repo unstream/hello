@@ -75,7 +75,7 @@
 								placeholder="Name" required="required"/>
 						</div>
 						<div class="form-group">
-							<label for="descriptionText">Description</label><textarea id="descriptionTextarea" 
+							<label for="descriptionTextarea">Description</label><textarea id="descriptionTextarea" 
 									class="form-control" rows="3" 
 									placeholder="Enter a description for this fractal image..."></textarea>
 						</div>
@@ -213,12 +213,10 @@
 	$(document).ready(function() {
 		$('#save-modal-submit').click(function() {
 			if ($('#nameInput').val() === "") {
-				// invalid
-				//$('#nameInput').next('.help-inline').show();
 				return false;
 			} else {
 				 $('#nameHidden').val($('#nameInput').val());
-				 $('#descriptionHidden').val($('#descriptionInput').val());
+				 $('#descriptionHidden').val($('#descriptionTextarea').val());
 			}
 		});
 	});
@@ -257,18 +255,18 @@
 
 	<script th:src="@{/dist/js/bootstrap.min.js}" src="../static/dist/js/bootstrap.min.js"></script>
 	<script th:src="@{/dist/js/bootstrap-colorpicker.js}" src="../static/dist/js/bootstrap-colorpicker.js"></script>
-							<script th:inline="javascript">
-							/*<![CDATA[*/
-							    $(function(){
-							        $('.colors').colorpicker({format: 'hex'}).on('changeColor', function(event) {
-						                $('#colormap').css(	'background', 
-						                					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
-						            });
-					                $('#colormap').css(	'background', 
-		                					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
-							    });
-							/*]]>*/
-							</script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+	    $(function(){
+	        $('.colors').colorpicker({format: 'hex'}).on('changeColor', function(event) {
+                $('#colormap').css(	'background', 
+                					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
+            });
+               $('#colormap').css(	'background', 
+            					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
+	    });
+	/*]]>*/
+	</script>
 	
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>	
