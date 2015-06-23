@@ -17,7 +17,7 @@ public interface MandelbrotService {
 	 * @return Future PNG image
 	 */
 	@Async
-	Future<byte []> computeMandelBrotPng(final Fractal fractal);
+	Future<byte []> computeMandelBrotPng(final Fractal fractal, final int width, final int height);
 	
 	/**
 	 * Create an image with the color map of height one.

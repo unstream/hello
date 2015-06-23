@@ -1,6 +1,5 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
-
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
 				data-toggle="collapse" data-target="#navbar" aria-expanded="false"
@@ -9,30 +8,19 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">Mandelbrot Set</a>
+			<a class="navbar-brand" href="../listfractals.html" th:href="@{/listfractals}">Mandelbrot Set</a>
 		</div>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
-			<!--  TODO: Set active:  class="active" -->
-				<li th:class="${page} == 'listFractals'? 'active'">
-					<a href="../listFractals.html" th:href="@{/listFractals}">Browse</a>
+				<li th:class="${page} == 'listfractals'? 'active'">
+					<a href="../listFractals.html" th:href="@{/listfractals}">Browse</a>
 				</li>
 				<li th:class="${page} == 'mandelbrot'? 'active'">
 					<a href="../mandelbrot.html" th:href="@{/mandelbrot}">Create</a>
 				</li>
-<!-- 
-				<li th:class="${page} == 'listusers'? 'active'">
-					<a href="../listusers.html" th:href="@{/listusers}">List Users</a>
-				</li>
--->
 				<li th:class="${page} == 'about'? 'active'">
 					<a href="../about.html" th:href="@{/about.html}">About</a>
 				</li>
-<!-- 
-				<li th:class="${page} == 'contact'? 'active'">
-					<a href="../contact.html" th:href="@{/contact.html}">Contact</a>
-				</li>
- -->
 			</ul>
 		</div>
 		<!--/.nav-collapse -->

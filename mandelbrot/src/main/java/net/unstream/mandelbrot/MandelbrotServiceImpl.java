@@ -34,11 +34,13 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	 * @see net.unstream.mandelbrot.MandelbrotService#computeMandelBrotPng(net.unstream.mandelbrot.Fractal)
 	 */
 	@Async
-	public Future<byte[]> computeMandelBrotPng(final Fractal fractal) throws MandelbrotServiceException {
+	public Future<byte[]> computeMandelBrotPng(final Fractal fractal,
+			final int width, final int height)
+			throws MandelbrotServiceException {
 		try {
 			long now = System.currentTimeMillis();
 			LOG.info("Starting to compute image ... ");
-			BufferedImage image = createMandelBrotImage(fractal);
+			BufferedImage image = createMandelBrotImage(fractal, width, height);
 			LOG.info("Completed in " + (System.currentTimeMillis() - now) + " ms.");
 
 	        final ImageFormat format = ImageFormat.IMAGE_FORMAT_PNG;
@@ -75,17 +77,17 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 		
 	}
 	
-	private BufferedImage createMandelBrotImage(Fractal fractal) {
-		final BufferedImage image = new BufferedImage(fractal.getWidth(), fractal.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+	private BufferedImage createMandelBrotImage(final Fractal fractal, final int width, final int height) {
+		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 		Color[] colorMap = generateColorMap(
         		Color.decode(fractal.getColor1()),
         		Color.decode(fractal.getColor2()),
         		Color.decode(fractal.getColor3())
         );
-        Map<Integer, double[]> lines = MandelBrot.compute(fractal);
+        Map<Integer, double[]> lines = MandelBrot.compute(fractal, width);
 
         for (int y: lines.keySet()) {
-        	for (int x = 0; x < fractal.getWidth(); x++) {
+        	for (int x = 0; x < width; x++) {
         		double nsmooth = lines.get(y)[x];
         		Color color = mapColor(nsmooth, colorMap, fractal);
         		image.setRGB(x, y, color.getRGB());

@@ -7,8 +7,9 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 @NodeEntity
+
 public class Fractal {
-    @GraphId Long id;
+	@GraphId Long id;
 
 	private String name = "";
 	private String description = "";
@@ -17,18 +18,20 @@ public class Fractal {
 	private double c0i = -1d;
 	private double c1 = 0.5d;
 	private double c1i = 1d;
-	private int width = 500;
-	private int height = 500;
 	private int iterations = 100;
 	private String color1 = "#000000";
 	private String color2 = "#00aabb";
 	private String color3 = "#ffffff";
-	private String imageUUID = null;
-	private byte [] image = null;
 
 	@RelatedTo(type="Parent", direction=Direction.OUTGOING)
-    public @Fetch Fractal parent;
-	
+    private @Fetch Fractal parent;
+
+    @RelatedTo(type="THUMB", direction=Direction.OUTGOING)
+    private @Fetch Image thumbnail;
+
+    @RelatedTo(type="IMAGE", direction=Direction.OUTGOING)
+    public Image image;
+    
 	public String getColor1() {
 		return color1;
 	}
@@ -71,18 +74,6 @@ public class Fractal {
 	public void setC1i(double c1i) {
 		this.c1i = c1i;
 	}
-	public int getWidth() {
-		return width;
-	}
-	public void setWidth(int width) {
-		this.width = width;
-	}
-	public int getHeight() {
-		return height;
-	}
-	public void setHeight(int height) {
-		this.height = height;
-	}
 	public int getIterations() {
 		return iterations;
 	}
@@ -113,18 +104,17 @@ public class Fractal {
 	public void setParent(Fractal parent) {
 		this.parent = parent;
 	}
-
-    public byte[] getImage() {
+    public Image getThumbnail() {
+		return thumbnail;
+	}
+	public void setThumbnail(Image thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+	public Image getImage() {
 		return image;
 	}
-	public void setImage(byte[] image) {
+	public void setImage(Image image) {
 		this.image = image;
 	}
-	public String getImageUUID() {
-		return imageUUID;
-	}
-	public void setImageUUID(String imageUUID) {
-		this.imageUUID = imageUUID;
-	}
-	
+
 }

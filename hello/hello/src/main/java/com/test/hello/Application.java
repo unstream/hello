@@ -15,7 +15,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.neo4j.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
-import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
@@ -34,7 +33,6 @@ public class Application {
 
 		@Bean
 		GraphDatabaseService graphDatabaseService() {
-			//http://hellofractal.sb04.stations.graphenedb.com:24789/
 //			return new SpringRestGraphDatabase("http://hellofractal.sb04.stations.graphenedb.com:24789/db/data/", 
 //					"hellofractal", "CnPxncpPKb9jnoXjf4My");
 			return new GraphDatabaseFactory().newEmbeddedDatabase("accessingdataneo4j.db");

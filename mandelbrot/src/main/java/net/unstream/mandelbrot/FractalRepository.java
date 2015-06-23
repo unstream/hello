@@ -6,7 +6,4 @@ public interface FractalRepository extends CrudRepository<Fractal, Long> {
 
 	Fractal findById(long id);
 
-//
-//    Iterable<Fractal> findByTeammatesName(String name);
-
 }
