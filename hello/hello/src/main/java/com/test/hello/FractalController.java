@@ -81,7 +81,7 @@ public class FractalController {
 		}
     }
     
-    @RequestMapping("/mandelbrot")
+    @RequestMapping(value="/mandelbrot", method = RequestMethod.GET)
     public String mandelbrot(
     		Fractal fractal, final boolean reset, final BindingResult bindingResult, 
     		HttpServletRequest request,
