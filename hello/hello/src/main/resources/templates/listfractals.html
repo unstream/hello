@@ -109,6 +109,28 @@
     
     <script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
     <script th:src="@{/dist/js/bootstrap.min.js}" src="../static/dist/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+		/*<![CDATA[*/
+		           
+			$('[rel=tooltip]').tooltip();
+			var deleteLink = $('td.taskOptions a.tip-top')
+			$(deleteLink).on('click', function(event) {
+				var rowToDelete = $(this).parents('tr');
+		        $.ajax({
+		            url: $(this).attr("href"),
+		            type: "DELETE",
+		            dataType:'json',
+	                contentType: 'application/json',
+	                mimeType: 'application/json',		            
+		            success: function(response) {
+		                rowToDelete.remove();
+		            }
+		        });
+		        event.preventDefault();
+			});
+			
+		/*]]>*/
+	</script>
 
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>	
