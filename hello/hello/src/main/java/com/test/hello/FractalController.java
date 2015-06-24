@@ -65,11 +65,17 @@ public class FractalController {
         }
     	List<Fractal> fractals = new ArrayList<Fractal>();
     	Transaction tx = graphDatabase.beginTx();
-    	Iterable<Fractal> iterable = fractalRepository.findAll();
-    	for (Fractal fractal : iterable) {
-    		fractals.add(fractal);
-    	}
-    	tx.success();
+    	try {
+			Iterable<Fractal> iterable = fractalRepository.findAll();
+			for (Fractal fractal : iterable) {
+				fractals.add(fractal);
+			}
+			tx.success();
+		} catch (Exception e) {
+			throw new MandelbrotServiceException(e);
+		} finally {
+			tx.close();
+		}
 		model.addAttribute("fractals", fractals);
 
 		if ("tiles".equals(mode)) {
@@ -124,7 +130,16 @@ public class FractalController {
     		//try to load it from the DB
     		try {
 				long id = Long.parseLong(imgId);
-				img = imageRepository.findById(id).getImage();
+				
+			  	Transaction tx = graphDatabase.beginTx();
+		    	try {
+					img = imageRepository.findById(id).getImage();
+					tx.success();
+				} catch (Exception e) {
+					throw new MandelbrotServiceException(e);
+				} finally {
+					tx.close();
+				}
 			} catch (NumberFormatException e) {
 				throw new MandelbrotServiceException(e);
 			}
@@ -156,7 +171,16 @@ public class FractalController {
     
     @RequestMapping("/mandelbrot/{id}")
 	public String mandelbrotRead(@PathVariable Long id, Model model) {
-		Fractal fractal = fractalRepository.findById(id);
+    	Fractal fractal = null;
+	  	Transaction tx = graphDatabase.beginTx();
+    	try {
+    		fractal = fractalRepository.findById(id);
+			tx.success();
+		} catch (Exception e) {
+			throw new MandelbrotServiceException(e);
+		} finally {
+			tx.close();
+		}
 		model.addAttribute("fractal", fractal);
 		model.addAttribute("imgId", fractal.getImage().getId());
     	model.addAttribute("page", "mandelbrot");
