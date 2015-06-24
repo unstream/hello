@@ -57,7 +57,7 @@ public class FractalController {
     @RequestMapping("/listfractals")
     @Transactional(readOnly=true)
     public String listFractals(Model model, final HttpServletRequest request, String mode) {
-    	model.addAttribute("page", "listFractals");
+    	model.addAttribute("page", "listfractals");
     	HttpSession session = request.getSession();
         
         if (mode == null) {
