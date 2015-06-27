@@ -15,15 +15,13 @@
 <!-- Bootstrap core CSS -->
 <link rel="stylesheet" type="text/css" th:href="@{/dist/css/bootstrap.min.css}" href="../static/dist/css/bootstrap.min.css" />
 
+
 <!-- Custom styles for this template -->
 <link rel="stylesheet" type="text/css" th:href="@{/starter-template.css}" href="../static/starter-template.css" />
+<script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>
 
 <link rel="stylesheet" type="text/css" th:href="@{/dist/css/imgareaselect-default.css}" href="../static/dist/css/imgareaselect-default.css" />
 <link rel="stylesheet" type="text/css" th:href="@{/dist/css/bootstrap-colorpicker.min.css}" href="../static/dist/css/bootstrap-colorpicker.min.css" />
-
-
-<script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>
-
 
 </head>
 
@@ -32,7 +30,6 @@
 	<div th:include="fragments/navbar" th:remove="tag">
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
-
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle collapsed"
 						data-toggle="collapse" data-target="#navbar" aria-expanded="false"
@@ -41,13 +38,19 @@
 							class="icon-bar"></span> <span class="icon-bar"></span> <span
 							class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="#">Project name</a>
+					<a class="navbar-brand" href="listfractals.html" th:href="@{/listfractals}">Mandelbrot Set</a>
 				</div>
 				<div id="navbar" class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Home</a></li>
-						<li><a href="#about">About</a></li>
-						<li><a href="#contact">Contact</a></li>
+						<li th:class="${page} == 'listfractals'? 'active'">
+							<a href="listfractals.html" th:href="@{/listfractals}">Browse</a>
+						</li>
+						<li class="active" th:class="${page} == 'mandelbrot'? 'active'">
+							<a href="mandelbrot.html" th:href="@{/mandelbrot}">Create</a>
+						</li>
+						<li th:class="${page} == 'about'? 'active'">
+							<a href="about.html" th:href="@{/about.html}">About</a>
+						</li>
 					</ul>
 				</div>
 				<!--/.nav-collapse -->
@@ -96,7 +99,7 @@
 		<div class="row">
 			<div class="col-md-6" >
 				<img id="zoom_01" class="img-responsive" src="../static/mandelbrot.png"
-					th:attr="src=@{/getMandelbrotImage(imgId=${fractal.imageUUID})}" />
+					th:attr="src=@{/getMandelbrotImage(imgId=${imgId})}" />
 			</div>
 			<div class="col-md-4" >
 
@@ -106,7 +109,8 @@
 						<form id="fractal-form" class="form-horizontal" method="get">
 							<input type="hidden" id="nameHidden" name="name" th:attr="value=${fractal.name}"/>
 							<input type="hidden" id="descriptionHidden" name="description" th:attr="value=${fractal.description}"/>							
-							<input type="hidden" id="imageUUIDHidden" name="imageUUID" th:attr="value=${fractal.imageUUID}"/>							
+							<input type="hidden" id="imgId" name="imgId" th:attr="value=${imgId}"/>							
+							<input type="hidden" id="thumbId" name="thumbId" th:attr="value=${thumbId}"/>							
 							<span id="colormap" class="btn btn-default col-md-12" style="cursor: default" >&nbsp;</span>
 
 							<div class="form-group">
@@ -183,7 +187,8 @@
 								</div>
 							</div>
 							<div class="btn-toolbar">
-								<button type="submit" class="btn btn-primary col-md-3 pull-right">Submit</button>
+								<button type="submit" class="btn btn-primary col-md-3 pull-right" formaction="../mandelbrot" th:formaction="@{/mandelbrot}" >Submit</button>
+								
 								<button type="submit" form="formreset" class="btn btn-default col-md-3 pull-right">Reset</button>
 								<a href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" data-toggle="modal">Save</a>
 

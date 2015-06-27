@@ -10,17 +10,16 @@ public class MandelBrot {
 	private MandelBrot() {
 	}
 
-	public static Map<Integer, double[]> compute(Fractal fractal) {
+	public static Map<Integer, double[]> compute(final Fractal fractal, final int width) {
 		final Complex c0 = new Complex(fractal.getC0(), fractal.getC0i());
 		final Complex c1 = new Complex(fractal.getC1(), fractal.getC1i());
-		final int width = fractal.getWidth();
 
         final double xStep = c1.subtract(c0).getReal() / width;
         final double yStep = c1.subtract(c0).getImaginary() / width;
                  
         Map<Integer, double[]> lines = new HashMap<Integer, double[]> ();
         for (int y = 0; y < width; y++) {
-        	lines.put(y, new double[fractal.getWidth()]);
+        	lines.put(y, new double[width]);
         }
         lines.keySet().parallelStream().forEach((y) -> {
         	double ic = yStep * y;
