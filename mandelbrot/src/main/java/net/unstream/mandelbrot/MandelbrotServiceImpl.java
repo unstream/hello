@@ -32,7 +32,11 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	 * @see net.unstream.mandelbrot.MandelbrotService#computeMandelBrotPng(net.unstream.mandelbrot.Fractal)
 	 */
 	@Async
-	public Future<byte[]> computeMandelBrotPng(final Fractal fractal, int width, int height) throws MandelbrotServiceException {
+
+	public Future<byte[]> computeMandelBrotPng(final Fractal fractal,
+			final int width, final int height)
+			throws MandelbrotServiceException {
+
 		try {
 			long now = System.currentTimeMillis();
 			LOG.info("Starting to compute image ... ");
@@ -81,7 +85,7 @@ public class MandelbrotServiceImpl implements MandelbrotService {
         		Color.decode(fractal.getColor3())
         );
         Map<Integer, double[]> lines;
-//        lines = MandelBrot.compute(fractal);
+//        lines = MandelBrot.compute(fractal, width);
 		MandelbrotTask fb = new MandelbrotTask(fractal, width);
 		ForkJoinPool pool = new ForkJoinPool();
 		pool.invoke(fb);
