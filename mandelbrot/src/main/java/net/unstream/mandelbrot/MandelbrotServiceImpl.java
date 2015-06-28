@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
 import javax.inject.Named;
+
+import net.unstream.mandelbrot.alg.MandelbrotAlg;
 
 import org.apache.sanselan.ImageFormat;
 import org.apache.sanselan.ImageWriteException;
@@ -24,7 +27,10 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	
 	private static final int COLOR_MAP_SIZE = 2000;
 	private final static Logger LOG = LoggerFactory.getLogger(MandelbrotServiceImpl.class);
-
+	
+	@Inject
+	@Named("forkjoin")
+	private final MandelbrotAlg alg = null;
 	public MandelbrotServiceImpl() {
 	}
 	
@@ -85,11 +91,8 @@ public class MandelbrotServiceImpl implements MandelbrotService {
         		Color.decode(fractal.getColor3())
         );
         Map<Integer, double[]> lines;
-//        lines = MandelBrot.compute(fractal, width);
-		MandelbrotTask fb = new MandelbrotTask(fractal, width);
-		ForkJoinPool pool = new ForkJoinPool();
-		pool.invoke(fb);
-		lines = fb.getLines();
+
+        lines = alg.compute(fractal, width);
 		
         for (int y: lines.keySet()) {
         	for (int x = 0; x < width; x++) {

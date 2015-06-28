@@ -1,0 +1,35 @@
+package net.unstream.mandelbrot.alg;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
+
+import javax.inject.Named;
+
+import org.apache.commons.math3.complex.Complex;
+
+import net.unstream.mandelbrot.Fractal;
+
+@Named("forkjoin")
+public class MandelbrotAlgForkJoin implements MandelbrotAlg {
+	
+	/* (non-Javadoc)
+	 * @see net.unstream.mandelbrot.MandelBrotAlg#compute(net.unstream.mandelbrot.Fractal, int)
+	 */
+	@Override
+	public Map<Integer, double[]> compute(final Fractal fractal, final int width) {
+		Map<Integer, double[]> lines = new HashMap<Integer, double[]>();
+		Complex c0 = new Complex(fractal.getC0(), fractal.getC0i());
+		double step = (fractal.getC1() - fractal.getC0()) / width;
+		int height = (int) Math.round((fractal.getC1i() - fractal.getC0i()) * width
+				/ (fractal.getC1() - fractal.getC0()));
+		for (int y = 0; y < height; y++) {
+			lines.put(y, new double[width]);
+		}
+		MandelbrotTask fb = new MandelbrotTask(c0, step, 0, 0, width, height,
+				fractal.getIterations(), lines);
+		ForkJoinPool pool = new ForkJoinPool();
+		pool.invoke(fb);
+		return fb.getLines();
+	}
+}
