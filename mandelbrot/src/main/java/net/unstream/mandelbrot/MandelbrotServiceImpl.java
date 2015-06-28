@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -38,7 +37,6 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	 * @see net.unstream.mandelbrot.MandelbrotService#computeMandelBrotPng(net.unstream.mandelbrot.Fractal)
 	 */
 	@Async
-
 	public Future<byte[]> computeMandelBrotPng(final Fractal fractal,
 			final int width, final int height)
 			throws MandelbrotServiceException {
@@ -58,8 +56,8 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 			LOG.error(e.getMessage(), e);
 			throw new MandelbrotServiceException(e);
 		}
-		
 	}
+
 	/* (non-Javadoc)
 	 * @see net.unstream.mandelbrot.MandelbrotService#computeColorGradientPng(net.unstream.mandelbrot.Fractal)
 	 */
@@ -80,7 +78,6 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 			LOG.error(e.getMessage(), e);
 			throw new MandelbrotServiceException(e);
 		}
-		
 	}
 	
 	private BufferedImage createMandelBrotImage(final Fractal fractal, final int width, final int height) {
@@ -103,7 +100,6 @@ public class MandelbrotServiceImpl implements MandelbrotService {
         }
 		return image;
 	}
-
 	
 	private Color mapColor(final double nsmooth, final Color[] colorMap, final Fractal fractal) {
 		int i = (int) Math.round(1d * nsmooth * colorMap.length / fractal.getIterations());
