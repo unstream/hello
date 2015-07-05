@@ -1,6 +1,5 @@
 package net.unstream.mandelbrot;
 
-import java.awt.Color;
 import java.util.concurrent.Future;
 
 import org.springframework.scheduling.annotation.Async;

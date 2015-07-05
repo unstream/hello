@@ -8,7 +8,7 @@
 <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 <meta name="description" content="" />
 <meta name="author" content="" />
-<link rel="icon" th:href="@{/favicon.ico}"  href="../static/favicon.ico" />
+<link rel="icon" th:href="@{assets/images/favicon.ico}"  href="../static/assets/images/favicon.ico" />
 
 <title>Ingo's World</title>
 
@@ -17,7 +17,7 @@
 
 
 <!-- Custom styles for this template -->
-<link rel="stylesheet" type="text/css" th:href="@{/starter-template.css}" href="../static/starter-template.css" />
+<link rel="stylesheet" type="text/css" th:href="@{/assets/css/starter-template.css}" href="../static/assets/css/starter-template.css" />
 <script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>
 
 <link rel="stylesheet" type="text/css" th:href="@{/dist/css/imgareaselect-default.css}" href="../static/dist/css/imgareaselect-default.css" />
@@ -52,6 +52,11 @@
 							<a href="about.html" th:href="@{/about.html}">About</a>
 						</li>
 					</ul>
+
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown " id="menuLogin"><a class="dropdown-toggle"
+							href="login.html" th:href="@{/login}" id="navLogin">Login</a></li>
+					</ul>
 				</div>
 				<!--/.nav-collapse -->
 			</div>
@@ -75,12 +80,14 @@
 						<div class="form-group">
 							<label for="nameInput">Name</label> <input
 								type="text" class="form-control" id="nameInput"
-								placeholder="Name" required="required"/>
+								placeholder="Name" required="required"
+								th:attr="value=${fractal.name}"/>
 						</div>
 						<div class="form-group">
 							<label for="descriptionTextarea">Description</label><textarea id="descriptionTextarea" 
 									class="form-control" rows="3" 
-									placeholder="Enter a description for this fractal image..."></textarea>
+									placeholder="Enter a description for this fractal image..."
+									th:attr="value=${fractal.description}"></textarea>
 						</div>
 
 					</form>
@@ -98,7 +105,7 @@
 				
 		<div class="row">
 			<div class="col-md-6" >
-				<img id="zoom_01" class="img-responsive" src="../static/mandelbrot.png"
+				<img id="zoom_01" class="img-responsive" src="../static/assets/images/mandelbrot.png"
 					th:attr="src=@{/getMandelbrotImage(imgId=${imgId})}" />
 			</div>
 			<div class="col-md-4" >
@@ -107,6 +114,8 @@
 					<div class="panel-body">
 
 						<form id="fractal-form" class="form-horizontal" th:object="${fractal}" method="post">
+							<input type="hidden" th:name="${_csrf.parameterName}" th:attr="value=${_csrf.token}" />
+							<input type="hidden" id="id" name="id" th:attr="value=${fractal.id}"/>
 							<input type="hidden" id="nameHidden" name="name" th:attr="value=${fractal.name}"/>
 							<input type="hidden" id="descriptionHidden" name="description" th:attr="value=${fractal.description}"/>							
 							<input type="hidden" id="imgId" name="imgId" th:attr="value=${imgId}"/>							

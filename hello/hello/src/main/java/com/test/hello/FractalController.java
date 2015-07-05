@@ -1,6 +1,5 @@
 package com.test.hello;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,7 +9,6 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 import net.unstream.mandelbrot.Fractal;
 import net.unstream.mandelbrot.FractalRepository;
@@ -18,6 +16,8 @@ import net.unstream.mandelbrot.Image;
 import net.unstream.mandelbrot.ImageRepository;
 import net.unstream.mandelbrot.MandelbrotService;
 import net.unstream.mandelbrot.MandelbrotServiceException;
+import net.unstream.mandelbrot.User;
+import net.unstream.mandelbrot.UserRepository;
 
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
@@ -45,6 +45,7 @@ public class FractalController {
 	@Autowired GraphDatabase graphDatabase;
 	@Autowired FractalRepository fractalRepository;
 	@Autowired ImageRepository imageRepository;
+	@Autowired UserRepository userRepository;
 
 
 	
@@ -199,19 +200,27 @@ public class FractalController {
 		Model model) throws ExecutionException, InterruptedException {
     	HttpSession session = request.getSession();
 
-    	Image thumb = new Image();
-		thumb.setHeight(64);
-		thumb.setWidth(64);
-		thumb.setImage(((Future<byte[]>) session.getAttribute(thumbId)).get());
-		
-    	Image full = new Image();
-		full.setImage(((Future<byte[]>) session.getAttribute(imgId)).get());
-
-		fractal.setThumbnail(thumb);
-		fractal.setImage(full);
-
     	Transaction tx = graphDatabase.beginTx();
     	try {
+        	if (fractal.getId() == null) {
+            	Image thumb = new Image();
+        		thumb.setHeight(64);
+        		thumb.setWidth(64);
+        		thumb.setImage(((Future<byte[]>) session.getAttribute(thumbId)).get());
+        		
+            	Image full = new Image();
+        		full.setImage(((Future<byte[]>) session.getAttribute(imgId)).get());
+
+        		fractal.setThumbnail(thumb);
+        		fractal.setImage(full);
+        	} else {
+        		Fractal savedFractal = fractalRepository.findById(fractal.getId());
+        		fractal.setImage(savedFractal.getImage());
+        		fractal.setThumbnail(savedFractal.getThumbnail());
+        	}
+
+
+    		
     		fractalRepository.save(fractal);
         	tx.success();
     	} catch (IllegalArgumentException e) {
@@ -256,5 +265,29 @@ public class FractalController {
         return "about";
     }
 
+    @RequestMapping("/login")
+    public String login(Model model) {
+    	model.addAttribute("page", "login");
+        return "login";
+    }
 
+    @RequestMapping("/signup")
+    public String signup(User user, Model model) {
+    	model.addAttribute("page", "login");
+    	
+    	Transaction tx = graphDatabase.beginTx();
+    	try {
+    		userRepository.save(user);
+        	tx.success();
+    	} catch (IllegalArgumentException e) {
+    		tx.failure();
+    	} finally {
+    		tx.close();
+    	}
+
+    	
+        return "redirect:mandelbrot";
+    }
+
+    
 }

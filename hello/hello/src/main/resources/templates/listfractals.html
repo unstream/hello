@@ -8,7 +8,10 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-<link rel="icon" th:href="@{/favicon.ico}"  href="../static/favicon.ico" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<link rel="icon" th:href="@{assets/images/favicon.ico}"  href="../static/assets/images/favicon.ico" />
 
 <title>Ingo's World</title>
 
@@ -16,7 +19,7 @@
 <link rel="stylesheet" type="text/css" th:href="@{/dist/css/bootstrap.min.css}" href="../static/dist/css/bootstrap.min.css" />
 
 <!-- Custom styles for this template -->
-<link rel="stylesheet" type="text/css" th:href="@{/starter-template.css}" href="../static/starter-template.css" />
+<link rel="stylesheet" type="text/css" th:href="@{/assets/css/starter-template.css}" href="../static/assets/css/starter-template.css" />
 <script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>
 
 
@@ -111,26 +114,35 @@
     <script th:src="@{/dist/js/bootstrap.min.js}" src="../static/dist/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
 		/*<![CDATA[*/
-		           
-			$('[rel=tooltip]').tooltip();
-			var deleteLink = $('td.taskOptions a.tip-top')
-			$(deleteLink).on('click', function(event) {
-				var rowToDelete = $(this).parents('tr');
-		        $.ajax({
-		            url: $(this).attr("href"),
-		            type: "DELETE",
-		            dataType:'json',
-	                contentType: 'application/json',
-	                mimeType: 'application/json',		            
-		            success: function(response) {
-		                rowToDelete.remove();
-		            }
-		        });
-		        event.preventDefault();
-			});
-			
-		/*]]>*/
-	</script>
+
+					$(function() {
+						var token = $("meta[name='_csrf']").attr("content");
+						var header = $("meta[name='_csrf_header']").attr(
+								"content");
+						$(document).ajaxSend(function(e, xhr, options) {
+							xhr.setRequestHeader(header, token);
+						});
+					});
+
+					$('[rel=tooltip]').tooltip();
+					var deleteLink = $('td.taskOptions a.tip-top')
+					$(deleteLink).on('click', function(event) {
+						var rowToDelete = $(this).parents('tr');
+						$.ajax({
+							url : $(this).attr("href"),
+							type : "DELETE",
+							dataType : 'json',
+							contentType : 'application/json',
+							mimeType : 'application/json',
+							success : function(response) {
+								rowToDelete.remove();
+							}
+						});
+						event.preventDefault();
+					});
+
+					/*]]>*/
+				</script>
 
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>	
