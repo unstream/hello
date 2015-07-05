@@ -100,10 +100,6 @@ public class MandelbrotTask extends RecursiveAction {
 		return lines;
 	}
 
-	public boolean isInside() {
-		return inside;
-	}
-
 	public static void setThreshold(int threshold) {
 		sThreshold = threshold;
 	}

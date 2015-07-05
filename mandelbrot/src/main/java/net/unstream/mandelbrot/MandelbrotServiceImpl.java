@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 @Named
 public class MandelbrotServiceImpl implements MandelbrotService {
 	
-	private static final int COLOR_MAP_SIZE = 2000;
+	private static final int COLOR_MAP_SIZE = 10000;
 	private final static Logger LOG = LoggerFactory.getLogger(MandelbrotServiceImpl.class);
 	
 	@Inject
@@ -61,7 +61,7 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	/* (non-Javadoc)
 	 * @see net.unstream.mandelbrot.MandelbrotService#computeColorGradientPng(net.unstream.mandelbrot.Fractal)
 	 */
-	public byte[] computeColorGradientPng(final Color... colors) throws MandelbrotServiceException {
+	public byte[] computeColorGradientPng(final Colors colors) throws MandelbrotServiceException {
 		try {
 			Color[] map = generateColorMap(colors);
 			
@@ -82,27 +82,25 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	
 	private BufferedImage createMandelBrotImage(final Fractal fractal, final int width, final int height) {
 		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-		Color[] colorMap = generateColorMap(
-        		Color.decode(fractal.getColor1()),
-        		Color.decode(fractal.getColor2()),
-        		Color.decode(fractal.getColor3())
-        );
-        Map<Integer, double[]> lines;
-
-        lines = alg.compute(fractal, width);
 		
-        for (int y: lines.keySet()) {
+		Color[] colorMap = generateColorMap(fractal.getColors()); 
+				
+        Map<Integer, double[]> lines;
+        lines = alg.compute(fractal, width);
+		for (int y = 0; y < Math.min(height, lines.size()); y++) {
         	for (int x = 0; x < width; x++) {
         		double nsmooth = lines.get(y)[x];
-        		Color color = mapColor(nsmooth, colorMap, fractal);
+        		Color color = mapColor(nsmooth, colorMap, fractal.getColors());
         		image.setRGB(x, y, color.getRGB());
         	}
         }
 		return image;
 	}
 	
-	private Color mapColor(final double nsmooth, final Color[] colorMap, final Fractal fractal) {
-		int i = (int) Math.round(1d * nsmooth * colorMap.length / fractal.getIterations());
+	private Color mapColor(final double nsmooth, final Color[] colorMap, final Colors colors) {
+		int[] cis = colors.getIterations();
+		int i = (int) Math.round( (nsmooth - cis[0]) * colorMap.length / (cis[cis.length - 1] - cis[0]));
+		
 		if (i < 0) {
 			i = 0;
 		} else if (i >= colorMap.length) {
@@ -111,17 +109,37 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 		return colorMap[i];
 	}
 
-	private Color[] generateColorMap(Color... colors) {
-		Color[] colorMap = new Color[COLOR_MAP_SIZE];
+	/**
+	 * Generate a color gradient. It starts with the first color and ends with the last color.
+	 * @param colors Defines the colors for the iterations.
+	 * @return Color map
+	 */
+	private Color[] generateColorMap(Colors colors) {
+		final Color[] colorMap = new Color[COLOR_MAP_SIZE];
+		final int iMax = colors.getIterations()[colors.getIterations().length - 1];
+		int idx = 0;
+		int it0 = colors.getIterations()[0] - 1;
+		int it1 = colors.getIterations()[0];
+		Color c0 = Color.WHITE;
+		Color c1 = Color.BLACK;
         for (int i = 0; i < COLOR_MAP_SIZE; i++) {
-        	float r = 1f * (colors.length - 1) * i / COLOR_MAP_SIZE;
-        	int i0 = (int) Math.floor(r);
-        	int i1 = i0 + 1;
-        	r = r - i0;
-        	
-        	int red = (int) ((1f - r) * colors[i0].getRed()   + r * colors[i1].getRed());
-			int green = (int) ((1f - r) * colors[i0].getGreen() + r * colors[i1].getGreen());
-			int blue = (int) ((1f - r) * colors[i0].getBlue()  + r * colors[i1].getBlue());
+        	//compute current iteration
+        	float currentIteration = 0.0f + colors.getIterations()[0] + (iMax - colors.getIterations()[0]) * i / (float) COLOR_MAP_SIZE;   
+        	if (currentIteration >= it1) {
+        		idx += 1;
+        		it0 = colors.getIterations()[idx - 1];
+        		it1 = colors.getIterations()[idx];
+        		c0 = Color.decode(colors.getColors()[idx - 1]);
+        		c1 = Color.decode(colors.getColors()[idx]);
+        	}
+        	/* 
+        	 * Interpolate between the colors c0 and c1 
+        	 */
+        	float r = 1.0f * (currentIteration - it0) / (it1 - it0);
+
+        	int red = (int) ((1f - r) * c0.getRed()   + r * c1.getRed());
+			int green = (int) ((1f - r) * c0.getGreen() + r * c1.getGreen());
+			int blue = (int) ((1f - r) * c0.getBlue()  + r * c1.getBlue());
 			Color color = new Color(red, green, blue);
 			colorMap[i] = color;
         }

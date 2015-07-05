@@ -106,84 +106,90 @@
 				<div class="panel panel-default">
 					<div class="panel-body">
 
-						<form id="fractal-form" class="form-horizontal" method="get">
+						<form id="fractal-form" class="form-horizontal" th:object="${fractal}" method="post">
 							<input type="hidden" id="nameHidden" name="name" th:attr="value=${fractal.name}"/>
 							<input type="hidden" id="descriptionHidden" name="description" th:attr="value=${fractal.description}"/>							
 							<input type="hidden" id="imgId" name="imgId" th:attr="value=${imgId}"/>							
 							<input type="hidden" id="thumbId" name="thumbId" th:attr="value=${thumbId}"/>							
-							<span id="colormap" class="btn btn-default col-md-12" style="cursor: default" >&nbsp;</span>
-
-							<div class="form-group">
-							</div>
-
-							<div class="form-group">
-								<label for="iterations" class="col-md-6 control-label">Color 1</label>
-								<div class="col-md-6">
-									<div class="input-group colorpicker-component colors">
-										<input id="color1" name="color1" type="text" value="#000000" class="form-control" 
-												th:attr="value=${fractal.color1}" /> 
-										<span class="input-group-addon"><i style="background-color: #000000;"></i>
-										</span>
-									</div>
-								</div>
-							<div class="form-group">
-							</div>
-								<label for="iterations" class="col-md-6 control-label">Color 2</label>
-								<div class="col-md-6">
-									<div class="input-group colorpicker-component colors">
-										<input id="color2" name="color2" type="text" value="#00AABB" class="form-control" 
-												th:attr="value=${fractal.color2}" /> 
-										<span class="input-group-addon"><i style="background-color: #00AABB;"></i>
-										</span>
-									</div>
-								</div>
-							</div>
 							
-							<div class="form-group">							
-								<label for="iterations" class="col-md-6 control-label">Color 3</label>
-								<div class="col-md-6">
-									<div class="input-group colorpicker-component colors">
-										<input id="color3" name="color3" type="text" value="#FFFFFF" class="form-control col-md-6"
-												th:attr="value=${fractal.color3}" />
-										<span class="input-group-addon"><i style="background-color: #FFFFFF;"></i>
-										</span>
+							<span id="colormap" class="btn btn-default col-md-12" style="width:100%; cursor: default" >&nbsp;</span>
+
+							<div class="form-group">
+							</div>
+
+							<div th:each="color,colorStat : ${fractal.colors.colors}">
+								<div class="form-group">
+									<label for="color1" class="col-md-6 control-label">Iteraton/Color</label>
+									<div class="col-md-6">
+										<div class="input-group colorpicker-component colors">
+											<input id="colors.colors[0]" name="colors.colors[0]" type="hidden" value="#000000" class="ch" 
+													th:id="colors.colors[+ ${colorStat.index} + ]"
+													th:name="colors.colors[+ ${colorStat.index} + ]" 
+													th:attr="value=${fractal.colors.colors[__${colorStat.index}__]}"/> 
+											<input class="form-control col-md-6" 
+													th:id="colors.iterations[+ ${colorStat.index} + ]"
+													th:name="colors.iterations[+ ${colorStat.index} + ]" 
+													name="iterations[0]" id="iteratios[0]" type="number" value="0" 
+													th:attr="value=${fractal.colors.iterations[__${colorStat.index}__]}"/> 
+											<span class="input-group-addon"><i style="background-color: #000000;"></i></span>
+										</div>
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="iterations" class="col-md-6 control-label">Iterations</label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" id="iterations"
-										name="iterations" placeholder="100"
-										th:attr="value=${fractal.iterations}" />
+
+							<div th:remove="all">
+								<div class="form-group">
+									<label for="color1" class="col-md-6 control-label">Iteraton/Color</label>
+									<div class="col-md-6">
+										<div class="input-group colorpicker-component colors">
+											<input id="colors.colors[1]" name="colors.colors[1]" type="hidden" value="#0080ff" class="ch"/> 
+											<input class="form-control col-md-6" 
+													name="colors.iterations[1]" id="colors.iteratios[1]" type="number" value="50" />
+											<span class="input-group-addon"><i style="background-color: #0080ff;"></i></span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="color1" class="col-md-6 control-label">Iteraton/Color</label>
+									<div class="col-md-6">
+										<div class="input-group colorpicker-component colors">
+											<input id="colors.colors[2]" name="colors.colors[2]" type="hidden" value="#ffffff" class="ch"/> 
+											<input class="form-control col-md-6" 
+													name="colors.iterations[2]" id="colors.iteratios[2]" type="number" value="100" />
+											<span class="input-group-addon"><i style="background-color: #ffffff;"></i></span>
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="form-group">
+
+
+							<div class="form-group" th:classappend="${#fields.hasErrors('c0')}? has-error">
 								<label for="x1" class="col-md-6 control-label">C<sub>0</sub></label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c0" name="c0"
-										th:attr="value=${fractal.c0}" value="-1.5" />
+										th:field="*{c0}" value="-1.5" />
 								</div>
 							</div>
-							<div class="form-group">
+
+							<div class="form-group" th:classappend="${#fields.hasErrors('c0i')}? has-error">
 								<label for="y1" class="col-md-6 control-label">C<sub>0</sub> i</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c0i" name="c0i"
-										th:attr="value=${fractal.c0i}" value="-1" />
+										th:field="*{c0i}" value="-1" />
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" th:classappend="${#fields.hasErrors('c1')}? has-error">
 								<label for="x2" class="col-md-6 control-label">C<sub>1</sub></label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c1" name="c1"
-										th:attr="value=${fractal.c1}" value="0.5"  />
+										th:field="*{c1}" value="0.5"  />
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" th:classappend="${#fields.hasErrors('c1i')}? has-error">
 								<label for="y2" class="col-md-6 control-label">C<sub>1</sub> i</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c1i" name="c1i"
-										th:attr="value=${fractal.c1i}" value="1"  />
+										th:field="*{c1i}" value="1"  />
 								</div>
 							</div>
 							<div class="btn-toolbar">
@@ -262,13 +268,27 @@
 	<script th:src="@{/dist/js/bootstrap-colorpicker.js}" src="../static/dist/js/bootstrap-colorpicker.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
-	    $(function(){
-	        $('.colors').colorpicker({format: 'hex'}).on('changeColor', function(event) {
-                $('#colormap').css(	'background', 
-                					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
+	    function setColormap() {
+        	var colors = "";
+        	var first = true;
+            $('input[name^="colors.color"]').each(function() {
+            	if (!first) {
+            		colors += ", ";
+            	} else {
+            		first = false;
+            	}
+                colors += this.value;
             });
-               $('#colormap').css(	'background', 
-            					'linear-gradient(to right, ' + $('#color1').val() + ', ' + $('#color2').val() + ', ' + $('#color3').val());
+            $('#colormap').css(	'background', 'linear-gradient(to right, ' + colors + ')');
+    		return;
+		}
+	           
+	           
+	    $(function(){
+	        $('.colors').colorpicker({input: '.ch', format: 'hex'}).on('hidePicker', function(event) {
+	        	setColormap();
+            });
+        	setColormap();
 	    });
 	/*]]>*/
 	</script>

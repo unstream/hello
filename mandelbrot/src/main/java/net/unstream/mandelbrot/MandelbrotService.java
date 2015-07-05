@@ -25,5 +25,5 @@ public interface MandelbrotService {
 	 * @return PNG image with the color gradient
 	 * @throws MandelbrotServiceException
 	 */
-	byte[] computeColorGradientPng(final Color... colors) throws MandelbrotServiceException;
+	byte[] computeColorGradientPng(final Colors colors) throws MandelbrotServiceException;
 }

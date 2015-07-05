@@ -31,7 +31,8 @@ public class MandelbrotAlgStream implements MandelbrotAlg {
         	double ic = yStep * y;
         	for (int x = 0; x < width; x++) {   
 				Complex c = c0.add(new Complex(xStep * x, ic));
-				double nsmooth = MandelbrotIteration.iterate(c, fractal.getIterations());
+				int[] iterations = fractal.getColors().getIterations();
+				double nsmooth = MandelbrotIteration.iterate(c, iterations[iterations.length - 1]);
 				lines.get(y)[x] = nsmooth;
         	}        	
         });

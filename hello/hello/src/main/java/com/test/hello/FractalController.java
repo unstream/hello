@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import net.unstream.mandelbrot.Fractal;
 import net.unstream.mandelbrot.FractalRepository;
@@ -87,11 +88,14 @@ public class FractalController {
 		}
     }
     
-    @RequestMapping(value="/mandelbrot", method = RequestMethod.GET)
+    @RequestMapping(value="/mandelbrot")
     public String mandelbrot(
-    		Fractal fractal, final boolean reset, final BindingResult bindingResult, 
+    		Fractal fractal, final BindingResult bindingResult, final boolean reset,  
     		HttpServletRequest request,
     		Model model) {
+		if (bindingResult.hasErrors()) {
+			return "mandelbrot";
+		}
     	model.addAttribute("page", "mandelbrot");
     	if (reset) {
     		fractal = new Fractal();
@@ -238,14 +242,14 @@ public class FractalController {
     	} 
     }
     
-    @RequestMapping(value = "/colorMapImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
-    @ResponseBody
-    public byte[] colorMapImage(String color1, String color2, String color3, HttpServletRequest request) throws MandelbrotServiceException, InterruptedException, ExecutionException {
-    	byte[] img = mService.computeColorGradientPng(Color.decode(color1), Color.decode(color2), Color.decode(color3));
-    	return img;
-
-    }
-    
+//    @RequestMapping(value = "/colorMapImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+//    @ResponseBody
+//    public byte[] colorMapImage(String color1, String color2, String color3, HttpServletRequest request) throws MandelbrotServiceException, InterruptedException, ExecutionException {
+//    	byte[] img = mService.computeColorGradientPng(Color.decode(color1), Color.decode(color2), Color.decode(color3));
+//    	return img;
+//
+//    }
+//    
     @RequestMapping("/about")
     public String about(Model model) {
     	model.addAttribute("page", "about");

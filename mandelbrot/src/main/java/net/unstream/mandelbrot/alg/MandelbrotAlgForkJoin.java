@@ -26,8 +26,9 @@ public class MandelbrotAlgForkJoin implements MandelbrotAlg {
 		for (int y = 0; y < height; y++) {
 			lines.put(y, new double[width]);
 		}
+		int[] iterations = fractal.getColors().getIterations();
 		MandelbrotTask fb = new MandelbrotTask(c0, step, 0, 0, width, height,
-				fractal.getIterations(), lines);
+				iterations[iterations.length - 1], lines);
 		ForkJoinPool pool = new ForkJoinPool();
 		pool.invoke(fb);
 		return fb.getLines();

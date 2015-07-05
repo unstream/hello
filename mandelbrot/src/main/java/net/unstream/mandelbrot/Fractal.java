@@ -7,8 +7,9 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 @NodeEntity
-
 public class Fractal {
+	
+	
 	@GraphId Long id;
 
 	private String name = "";
@@ -18,10 +19,6 @@ public class Fractal {
 	private double c0i = -1d;
 	private double c1 = 0.5d;
 	private double c1i = 1d;
-	private int iterations = 100;
-	private String color1 = "#000000";
-	private String color2 = "#00aabb";
-	private String color3 = "#ffffff";
 
 	@RelatedTo(type="Parent", direction=Direction.OUTGOING)
     private @Fetch Fractal parent;
@@ -30,26 +27,15 @@ public class Fractal {
     private @Fetch Image thumbnail;
 
     @RelatedTo(type="IMAGE", direction=Direction.OUTGOING)
-    public Image image;
+    private Image image;
+
+    @RelatedTo(type="COLORMAPPING", direction=Direction.OUTGOING)
+    private @Fetch Colors colors;
+
+	public Fractal() {
+    	colors = new Colors();
+    }
     
-	public String getColor1() {
-		return color1;
-	}
-	public void setColor1(String color1) {
-		this.color1 = color1;
-	}
-	public String getColor2() {
-		return color2;
-	}
-	public void setColor2(String color2) {
-		this.color2 = color2;
-	}
-	public String getColor3() {
-		return color3;
-	}
-	public void setColor3(String color3) {
-		this.color3 = color3;
-	}
 	public double getC0() {
 		return c0;
 	}
@@ -73,12 +59,6 @@ public class Fractal {
 	}
 	public void setC1i(double c1i) {
 		this.c1i = c1i;
-	}
-	public int getIterations() {
-		return iterations;
-	}
-	public void setIterations(int iterations) {
-		this.iterations = iterations;
 	}
 	public Long getId() {
 		return id;
@@ -115,6 +95,12 @@ public class Fractal {
 	}
 	public void setImage(Image image) {
 		this.image = image;
+	}
+	public Colors getColors() {
+		return colors;
+	}
+	public void setColors(Colors colors) {
+		this.colors = colors;
 	}
 
 }
