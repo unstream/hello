@@ -126,7 +126,8 @@ public class FractalController {
 				fractal = new Fractal(); 
 			}
 		}
-
+		/* detach the object after submit */
+		fractal.setId(null);
 		session.setAttribute("fractal", fractal);
 		final String thumbId = UUID.randomUUID().toString();
 		final String imgId = UUID.randomUUID().toString();
@@ -299,14 +300,16 @@ public class FractalController {
 		injectUser(model);
     	
     	Transaction tx = graphDatabase.beginTx();
-    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
     	user.setPassword(encoder.encode(user.getPassword()));
     	try {
     		userRepository.save(user);
         	tx.success();
-    	} catch (IllegalArgumentException e) {
+    	} catch (Exception e) {
     		tx.failure();
+    		//TODO: add error method to signup dialog
+    		return "login";
     	} finally {
     		tx.close();
     	}

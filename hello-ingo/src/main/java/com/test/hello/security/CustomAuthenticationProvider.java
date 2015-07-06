@@ -46,7 +46,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			tx.close();
 		}
     	
-    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
     	if ((user != null) && (encoder.matches(password, user.getPassword()))) {
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
