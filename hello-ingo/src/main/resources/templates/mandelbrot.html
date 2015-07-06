@@ -208,10 +208,10 @@
 								</div>
 							</div>
 							<div class="btn-toolbar">
-								<button type="submit" class="btn btn-primary col-md-3 pull-right" formaction="../mandelbrot" th:formaction="@{/mandelbrot}" >Submit</button>
+								<button type="submit" formmethod="get" class="btn btn-primary col-md-3 pull-right" formaction="../mandelbrot" th:formaction="@{/mandelbrot}" >Submit</button>
 								
 								<button type="submit" form="formreset" class="btn btn-default col-md-3 pull-right">Reset</button>
-								<a href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" data-toggle="modal">Save</a>
+								<a href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" th:if="${user}!='anonymous'" data-toggle="modal">Save</a>
 
 							</div>
 						</form>
