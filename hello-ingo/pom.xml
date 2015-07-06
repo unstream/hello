@@ -3,15 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.springframework</groupId>
+	<groupId>net.unstream</groupId>
 	<artifactId>hello-ingo</artifactId>
-	<version>0.7.3</version>
 	<packaging>war</packaging>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.2.3.RELEASE</version>
+		<groupId>net.unstream</groupId>
+		<artifactId>hello</artifactId>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
