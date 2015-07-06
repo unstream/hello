@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -276,6 +277,9 @@ public class FractalController {
     	model.addAttribute("page", "login");
     	
     	Transaction tx = graphDatabase.beginTx();
+    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+
+    	user.setPassword(encoder.encode(user.getPassword()));
     	try {
     		userRepository.save(user);
         	tx.success();

@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,11 +45,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		} finally {
 			tx.close();
 		}
-        if ((user != null) && (user.getPassword().equals(password))) {
+    	
+    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+
+    	if ((user != null) && (encoder.matches(password, user.getPassword()))) {
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             grantedAuths.add(new SimpleGrantedAuthority("USER_ROLE"));
             if (user.isAdmin()) {
-            	grantedAuths.add(new SimpleGrantedAuthority("ADMIN_ROLE"));            }
+            	grantedAuths.add(new SimpleGrantedAuthority("ADMIN_ROLE"));
+            }
             return new UsernamePasswordAuthenticationToken(name, password, grantedAuths);
         } else {
             throw new CustomAuthenticationException("Authentication error");
