@@ -22,9 +22,16 @@
 					<a href="../about.html" th:href="@{/about.html}">About</a>
 				</li>
 			</ul>
+			<!-- <span sec:authentication="name">Bob</span></p> -->
 			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown " id="menuLogin"><a class="dropdown-toggle"
-					href="#login" th:href="@{/login}" id="navLogin">Login</a></li>
+				<li>
+					<p class="navbar-text">User: <strong><span th:text="${user}">Bob</span></strong></p>
+				</li>
+				<li th:if="${user}=='anonymous'" id="menuLogin"><a class="dropdown-toggle"
+					href="login.html" th:href="@{/login}" id="navLogin">Login</a></li>
+				<li th:if="${user}!='anonymous'"  id="menuLogout">
+					<a class="dropdown-toggle" role="button" th:href="@{/logout}" id="navLogout">Log out</a>
+				</li>
 			</ul>
 		</div>
 		<!--/.nav-collapse -->

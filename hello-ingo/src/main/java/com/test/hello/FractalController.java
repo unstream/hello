@@ -26,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +64,9 @@ public class FractalController {
     @Transactional(readOnly=true)
     public String listFractals(Model model, final HttpServletRequest request, String mode) {
     	model.addAttribute("page", "listfractals");
-    	HttpSession session = request.getSession();
+		injectUser(model);
+
+		HttpSession session = request.getSession();
         
         if (mode == null) {
 			mode = (String) session.getAttribute("mode");
@@ -90,16 +95,28 @@ public class FractalController {
 		}
     }
     
-    @RequestMapping(value="/mandelbrot")
+    private void injectUser(Model model) {
+    	String user = "anonymous";
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	if (!(authentication instanceof AnonymousAuthenticationToken)) {
+    	    user = authentication.getName(); 
+    	}
+    	model.addAttribute("user", user);
+    }
+
+	@RequestMapping(value="/mandelbrot")
     public String mandelbrot(
     		Fractal fractal, final BindingResult bindingResult, final boolean reset,  
     		HttpServletRequest request,
     		Model model) {
+    	model.addAttribute("page", "mandelbrot");
+		injectUser(model);
+
 		if (bindingResult.hasErrors()) {
 			return "mandelbrot";
 		}
-    	model.addAttribute("page", "mandelbrot");
-    	if (reset) {
+
+		if (reset) {
     		fractal = new Fractal();
     	}
     	HttpSession session = request.getSession();
@@ -190,6 +207,7 @@ public class FractalController {
 		model.addAttribute("fractal", fractal);
 		model.addAttribute("imgId", fractal.getImage().getId());
     	model.addAttribute("page", "mandelbrot");
+		injectUser(model);
 		return "mandelbrot";
     }
 
@@ -230,6 +248,7 @@ public class FractalController {
     		tx.close();
     	}
     	model.addAttribute("page", "mandelbrot");
+		injectUser(model);
 		model.addAttribute("fractal", fractal);
 		model.addAttribute("imgId", imgId);
 		model.addAttribute("thumbId", thumbId);
@@ -263,18 +282,21 @@ public class FractalController {
     @RequestMapping("/about")
     public String about(Model model) {
     	model.addAttribute("page", "about");
+		injectUser(model);
         return "about";
     }
 
     @RequestMapping("/login")
     public String login(Model model) {
     	model.addAttribute("page", "login");
+		injectUser(model);
         return "login";
     }
 
     @RequestMapping("/signup")
     public String signup(User user, Model model) {
     	model.addAttribute("page", "login");
+		injectUser(model);
     	
     	Transaction tx = graphDatabase.beginTx();
     	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
@@ -288,8 +310,6 @@ public class FractalController {
     	} finally {
     		tx.close();
     	}
-
-    	
         return "redirect:mandelbrot";
     }
 
