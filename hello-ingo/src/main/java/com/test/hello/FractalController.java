@@ -23,6 +23,7 @@ import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,10 +47,10 @@ public class FractalController {
 	@Inject
 	MandelbrotService mService;
 	
-	@Autowired GraphDatabase graphDatabase;
-	@Autowired FractalRepository fractalRepository;
-	@Autowired ImageRepository imageRepository;
-	@Autowired UserRepository userRepository;
+	@Lazy @Autowired GraphDatabase graphDatabase;
+	@Lazy @Autowired FractalRepository fractalRepository;
+	@Lazy @Autowired ImageRepository imageRepository;
+	@Lazy @Autowired UserRepository userRepository;
 
 
 	
