@@ -32,13 +32,13 @@ public class Application {
 		GraphDatabaseService graphDatabaseService() {
 //			return new SpringRestGraphDatabase("http://hellofractal.sb04.stations.graphenedb.com:24789/db/data/", 
 //					"hellofractal", "CnPxncpPKb9jnoXjf4My");
-			return new GraphDatabaseFactory().newEmbeddedDatabase("accessingdataneo4j.db");
+			String dbDataDirectory = System.getProperty("neo4jData");
+			System.out.println("Storing neo4j data in: " + dbDataDirectory);
+			return new GraphDatabaseFactory().newEmbeddedDatabase(dbDataDirectory);
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		FileUtils.deleteRecursively(new File("accessingdataneo4j.db"));
-
 		SpringApplication.run(Application.class, args);
 	}
 
