@@ -82,7 +82,7 @@
 						<th>Name</th>
 						<th>Description</th>
 						<th>Rating</th>
-						<th></th>
+						<th th:if="${user}!='anonymous'" ></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -97,7 +97,7 @@
 						<td style="vertical-align: middle" th:text="${fractal.name}">Complete Mandelbrot</td>
 						<td style="vertical-align: middle" th:text="${fractal.description}">The complete Mandelbrot Set in blue.</td>
 						<td style="vertical-align: middle" ><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span></td>
-						<td style="vertical-align: middle" class="taskOptions text-center">
+						<td th:if="${user}!='anonymous'" style="vertical-align: middle" class="taskOptions text-center">
 							<a th:href="@{'/mandelbrot/' + ${fractal.id} + '.json'}" href="#deleteProject" rel="tooltip" data-toggle="modal" class="tip-top"
             data-original-title="Delete"><i class="glyphicon glyphicon-trash"></i></a>
 

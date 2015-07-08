@@ -56,11 +56,6 @@ public class FractalController {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(FractalController.class);
 
-    @RequestMapping("/")
-    public String index() {
-        return "redirect: /listfractals";
-    }
-    
     @RequestMapping("/listfractals")
     @Transactional(readOnly=true)
     public String listFractals(Model model, final HttpServletRequest request, String mode) {
@@ -105,7 +100,7 @@ public class FractalController {
     	model.addAttribute("user", user);
     }
 
-	@RequestMapping(value="/mandelbrot")
+	@RequestMapping(value={"/", "/mandelbrot"})
     public String mandelbrot(
     		Fractal fractal, final BindingResult bindingResult, final boolean reset,  
     		HttpServletRequest request,
@@ -309,7 +304,6 @@ public class FractalController {
         	tx.success();
     	} catch (Exception e) {
     		tx.failure();
-    		//TODO: add error method to signup dialog
     		return "login";
     	} finally {
     		tx.close();

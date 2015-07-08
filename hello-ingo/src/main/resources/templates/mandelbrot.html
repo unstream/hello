@@ -211,7 +211,25 @@
 								<button type="submit" formmethod="get" class="btn btn-primary col-md-3 pull-right" formaction="../mandelbrot" th:formaction="@{/mandelbrot}" >Submit</button>
 								
 								<button type="submit" form="formreset" class="btn btn-default col-md-3 pull-right">Reset</button>
-								<a href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" th:if="${user}!='anonymous'" data-toggle="modal">Save</a>
+								
+								<!-- Split button
+								<div class="btn-group  pull-right ">
+									<button type="submit" form="formreset" class="btn btn-default">Reset</button>
+									<button type="button" class="btn dropdown-toggle"
+										data-toggle="dropdown" aria-haspopup="true"
+										aria-expanded="false">
+										<span class="caret"></span> <span class="sr-only">Toggle
+											Dropdown</span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a href="#">Reset</a></li>
+										<li><a href="#">Reset Colors</a></li>
+										<li><a href="#">Zoom out</a></li>
+									</ul>
+								</div>
+ 								-->
+	
+								<a th:classappend="${user}=='anonymous'? disabled" href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" data-toggle="modal">Save</a>
 
 							</div>
 						</form>
