@@ -1,4 +1,4 @@
-FROM errordeveloper/oracle-jdk
+FROM errordeveloper/oracle-jre
 MAINTAINER Ingo Weichsel
 RUN mkdir /data
 ADD hello-ingo-1.0-SNAPSHOT.war /data/
