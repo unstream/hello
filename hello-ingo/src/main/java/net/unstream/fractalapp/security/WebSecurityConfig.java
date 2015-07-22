@@ -1,4 +1,4 @@
-package com.test.hello.security;
+package net.unstream.fractalapp.security;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers("/", "/mandelbrot", "/getMandelbrotImage", "/listFractals",  
-                		"/signup", "/about", "/image", 
+                		"/signup", "/about", "/image", "/bigimage.png", 
                 		"/js/**", "/dist/**", "/assets/**", "/css/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

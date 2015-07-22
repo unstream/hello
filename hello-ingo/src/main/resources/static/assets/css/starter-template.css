@@ -5,3 +5,12 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+.product {
+    position: relative
+}
+.zoom-btn {
+    font-size: 2rem;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}

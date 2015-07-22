@@ -17,6 +17,7 @@
 
 <!-- Custom styles for this template -->
 <link rel="stylesheet" type="text/css" th:href="@{/assets/css/starter-template.css}" href="../static/assets/css/starter-template.css" />
+<link rel="stylesheet" type="text/css" th:href="@{/assets/zoombox/zoombox.css}" href="../static/assets/zoombox/zoombox.css" />
 <script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>
 
 
@@ -71,21 +72,56 @@
 				</div>
 			</div>
 	        <div class="row">
-	            <div class="col-md-4" th:each="fractal : ${fractals}" data-row-id="1" th:attr="data-row-id=${fractal.id}">
-					<a th:href="@{'/mandelbrot/' + ${fractal.id}}" href="#read" >
-						<img class="img-responsive center-block" th:if="${fractal.image != null}" id="fractal" th:id="fractal + ${fractal.id}" src="../static/mandelbrot.png"
-							th:attr="src=@{/image(id=${fractal.image.id})}" />
-					</a>
-	                <h4 class="text-center" th:text="${fractal.name}">Blue Fractal</h4>
-	            <!--     <p class="text-center" th:text="${fractal.description}">bla bla bla bla</p>   -->
-	            </div>
-	        </div>
+				<div class="col-md-4" th:each="fractal : ${fractals}"
+					data-row-id="1" th:attr="data-row-id=${fractal.id}">
+					<div class="product text-center">
+						<a th:href="@{'/mandelbrot/' + ${fractal.id}}" href="#read">
+							<img class="img-responsive center-block"
+								th:if="${fractal.image != null}" id="fractal" th:id="fractal + ${fractal.id}"
+								th:attr="src=@{/image(id=${fractal.image.id})}" src="../static/assets/images/mandelbrot.png"/> 
+						</a>
+						<a class="zoombox" th:attr="href=@{/bigimage.png(id=${fractal.id})}" href="../static/assets/images/mandelbrot.png" data-toggle="lightbox" >
+							<span class="glyphicon glyphicon-fullscreen zoom-btn"></span>
+						</a>
+					</div>
+					<h4 class="text-center" th:text="${fractal.name}">Blue Fractal</h4>
+					<!--     <p class="text-center" th:text="${fractal.description}">bla bla bla bla</p>   -->
+				</div>
+			</div>
         <!-- /.row -->
 		</div>
 
     </div><!-- /.container -->
 
     <script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
+
+    <script th:src="@{/assets/zoombox/zoombox.js}" src="../static/assets/zoombox/zoombox.js"></script>
+    <script th:inline="javascript">
+	/*<![CDATA[*/
+	           
+    // delegate calls to data-toggle="zoombox"
+    
+    
+    	$(document).ready(function() {
+            $('a.zoombox').zoombox({});
+		});
+	/*]]>*/
+	</script>
+
+    <script th:src="@{/js/ekko-lightbox.min.js}" src="../static/js/ekko-lightbox.min.js"></script>
+    <script th:inline="javascript">
+	/*<![CDATA[*/
+	           
+    // delegate calls to data-toggle="lightbox"
+    	$(document).ready(function() {
+			$(document).delegate('*[data-toggle="lightbox"]:not([data-gallery="navigateTo"])', 'click', function(event) {
+				event.preventDefault();
+				return $(this).ekkoLightbox({type: 'image'});
+			});
+		});
+	/*]]>*/
+	</script>
+
     <script th:src="@{/dist/js/bootstrap.min.js}" src="../static/dist/js/bootstrap.min.js"></script>
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>	

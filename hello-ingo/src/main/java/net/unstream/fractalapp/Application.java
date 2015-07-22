@@ -1,4 +1,4 @@
-package com.test.hello;
+package net.unstream.fractalapp;
 
 import java.io.File;
 
@@ -15,7 +15,7 @@ import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@ComponentScan({"com.test.hello", "net.unstream"})
+@ComponentScan({"net.unstream.fractalapp", "net.unstream"})
 @EnableAsync
 public class Application {
 

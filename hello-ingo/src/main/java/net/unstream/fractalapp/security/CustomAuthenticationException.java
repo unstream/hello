@@ -1,4 +1,4 @@
-package com.test.hello.security;
+package net.unstream.fractalapp.security;
 
 import org.springframework.security.core.AuthenticationException;
 

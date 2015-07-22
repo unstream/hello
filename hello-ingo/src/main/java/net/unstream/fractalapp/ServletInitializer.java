@@ -1,4 +1,4 @@
-package com.test.hello;
+package net.unstream.fractalapp;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 

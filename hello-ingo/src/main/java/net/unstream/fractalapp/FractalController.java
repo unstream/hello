@@ -1,4 +1,4 @@
-package com.test.hello;
+package net.unstream.fractalapp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,6 +187,36 @@ public class FractalController {
     		tx.close();
     	} 
     	return img;
+    }
+
+    /**
+     * Retrieve an image from the database.
+     * @param id image id
+     * @return PNG image
+     */
+    @RequestMapping(value = "/bigimage.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    @Transactional(readOnly=true)
+    public byte[] bigImage(long id) {
+    	byte[] img = null;
+    	Fractal fractal = null;
+    	Transaction tx = graphDatabase.beginTx();
+    	try {
+    		fractal = fractalRepository.findById(id);
+        	tx.success();
+        	Future<byte[]> imgFuture = mService.computeMandelBrotPng(fractal, 1500, 1500);
+        	try {
+    			img = imgFuture.get();
+    		} catch (InterruptedException | ExecutionException e) {
+    			LOG.error(e.getMessage(), e);
+    		}
+    	} catch (IllegalArgumentException e) {
+    		tx.failure();
+			LOG.error(e.getMessage(), e);
+    	} finally {
+    		tx.close();
+    	}
+		return img;
     }
     
     @RequestMapping("/mandelbrot/{id}")
