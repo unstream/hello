@@ -56,10 +56,10 @@ Time[MandelBrotAlgForkJoin]: 683
 	 */
 	@Test
 	public void testBenchmark() {
-		int[] iterations = {10, 100, 200};
-		int[] sizes = {100, 200, 400, 800};
+		int[] iterations = {10, 100};
+		int[] sizes = {100, 200, 400};
 		MandelbrotAlg[] algorithms = {new MandelbrotAlgStream(), new MandelbrotAlgForkJoin()};
-		for (int threshold = 20; threshold <= 100; threshold += 20) {
+		for (int threshold = 20; threshold <= 80; threshold += 20) {
 			MandelbrotTask.setThreshold(threshold);
 			for (MandelbrotAlg alg: algorithms) {
 				long start = System.currentTimeMillis();
