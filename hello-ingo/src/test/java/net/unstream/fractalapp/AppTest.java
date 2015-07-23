@@ -1,4 +1,4 @@
-package com.test.hello;
+package net.unstream.fractalapp;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
