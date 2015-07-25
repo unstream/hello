@@ -29,7 +29,10 @@ public class Fractal {
     @RelatedTo(type="IMAGE", direction=Direction.OUTGOING)
     private Image image;
 
-    @RelatedTo(type="COLORMAPPING", direction=Direction.OUTGOING)
+    @RelatedTo(type="CREATOR", direction=Direction.OUTGOING)
+    private @Fetch User creator;
+
+	@RelatedTo(type="COLORMAPPING", direction=Direction.OUTGOING)
     private @Fetch Colors colors;
 
 	public Fractal() {
@@ -95,6 +98,17 @@ public class Fractal {
 	}
 	public void setImage(Image image) {
 		this.image = image;
+	}
+    public User getCreator() {
+    	User user = creator;
+    	if (user == null) {
+    		user = new User();
+    		user.setUsername("anonymous");
+    	}
+		return user;
+	}
+	public void setCreator(User creator) {
+		this.creator = creator;
 	}
 	public Colors getColors() {
 		return colors;

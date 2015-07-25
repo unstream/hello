@@ -1,5 +1,6 @@
 package net.unstream.fractalapp;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -243,9 +244,8 @@ public class FractalController {
     public String mandelbrotSave(
 		Fractal fractal, final String imgId, final String thumbId, 
 		HttpServletRequest request,
-		Model model) throws ExecutionException, InterruptedException {
+		Model model, Principal principal) throws ExecutionException, InterruptedException {
     	HttpSession session = request.getSession();
-
     	Transaction tx = graphDatabase.beginTx();
     	try {
         	if (fractal.getId() == null) {
@@ -259,13 +259,14 @@ public class FractalController {
 
         		fractal.setThumbnail(thumb);
         		fractal.setImage(full);
+        		User user = userRepository.findByUsername(principal.getName());
+        		fractal.setCreator(user);
+        		
         	} else {
         		Fractal savedFractal = fractalRepository.findById(fractal.getId());
         		fractal.setImage(savedFractal.getImage());
         		fractal.setThumbnail(savedFractal.getThumbnail());
         	}
-
-
     		
     		fractalRepository.save(fractal);
         	tx.success();
