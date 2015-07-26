@@ -25,7 +25,7 @@
 			<!-- <span sec:authentication="name">Bob</span></p> -->
 			<ul class="nav navbar-nav navbar-right">
 				<li>
-					<p class="navbar-text">User: <strong><span th:text="${user}">Bob</span></strong></p>
+					<p class="navbar-text">User: <a href="../profile.html" th:href="@{/profile}"><strong><span th:text="${user}">Bob</span></strong></a></p>
 				</li>
 				<li th:if="${user}=='anonymous'" id="menuLogin"><a class="dropdown-toggle"
 					href="login.html" th:href="@{/login}" id="navLogin">Login</a></li>
