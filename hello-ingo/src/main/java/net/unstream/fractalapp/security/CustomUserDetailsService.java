@@ -34,8 +34,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     	Transaction tx = graphDatabase.beginTx();
     	User user = null;
+    	UserDetails details = null;
     	try {
 			user = userRepository.findByUsername(username);
+			if (user !=null) {
+		        List<GrantedAuthority> grantedAuths = new ArrayList<>();
+		        grantedAuths.add(new SimpleGrantedAuthority(Authorities.ROLE_USER));
+		        if (user.isAdmin()) {
+		        	grantedAuths.add(new SimpleGrantedAuthority(Authorities.ROLE_ADMIN));
+		        }
+				details = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuths);
+			}
 			tx.success();
 		} catch (Exception e) {
 			throw new MandelbrotServiceException(e);
@@ -43,13 +52,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 			tx.close();
 		}
     	
-        List<GrantedAuthority> grantedAuths = new ArrayList<>();
-        grantedAuths.add(new SimpleGrantedAuthority(Authorities.ROLE_USER));
-        if (user.isAdmin()) {
-        	grantedAuths.add(new SimpleGrantedAuthority(Authorities.ROLE_ADMIN));
-        }
-		UserDetails details = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuths);
-		
 		return details;
 	}
 
