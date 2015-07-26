@@ -1,10 +1,7 @@
 package net.unstream.fractalapp;
 
-import java.io.File;
-
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.kernel.impl.util.FileUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +31,9 @@ public class Application {
 //					"hellofractal", "CnPxncpPKb9jnoXjf4My");
 			String dbDataDirectory = System.getProperty("neo4jData");
 			System.out.println("Storing neo4j data in: " + dbDataDirectory);
-			return new GraphDatabaseFactory().newEmbeddedDatabase(dbDataDirectory);
+			GraphDatabaseService database = new GraphDatabaseFactory().newEmbeddedDatabase(dbDataDirectory);
+			
+			return database;
 		}
 	}
 

@@ -1,23 +1,15 @@
 package net.unstream.fractalapp.security;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Named;
 
-import net.unstream.mandelbrot.MandelbrotServiceException;
-import net.unstream.mandelbrot.User;
-import net.unstream.mandelbrot.UserRepository;
-
-import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +17,7 @@ import org.springframework.stereotype.Component;
 @Named("customAuthenticationProvider")
 public class CustomAuthenticationProvider implements AuthenticationProvider {
  
-	@Lazy @Autowired GraphDatabase graphDatabase;
-	@Lazy @Autowired UserRepository userRepository;
+	@Lazy @Autowired UserDetailsService userDetailsService;
 
 	
 	@Override
@@ -34,32 +25,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
       throws AuthenticationException {
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
- 
-    	Transaction tx = graphDatabase.beginTx();
-    	User user = null;
-    	try {
-			user = userRepository.findByUsername(name);
-			tx.success();
-		} catch (Exception e) {
-			throw new MandelbrotServiceException(e);
-		} finally {
-			tx.close();
-		}
     	
     	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
-    	if ((user != null) && (encoder.matches(password, user.getPassword()))) {
-            List<GrantedAuthority> grantedAuths = new ArrayList<>();
-            grantedAuths.add(new SimpleGrantedAuthority("USER_ROLE"));
-            if (user.isAdmin()) {
-            	grantedAuths.add(new SimpleGrantedAuthority("ADMIN_ROLE"));
-            }
-            return new UsernamePasswordAuthenticationToken(name, password, grantedAuths);
+    	UserDetails details = userDetailsService.loadUserByUsername(name);
+    	if ((details != null) && (encoder.matches(password, details.getPassword()))) {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(name, password, details.getAuthorities());
+			return authenticationToken;
         } else {
-            throw new CustomAuthenticationException("Authentication error");
+            throw new BadCredentialsException("Authentication error.");
         }
     }
- 
+ 	
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);

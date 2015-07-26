@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.unstream.fractalapp.security.CustomAuthenticationProvider;
 import net.unstream.mandelbrot.Fractal;
 import net.unstream.mandelbrot.FractalRepository;
 import net.unstream.mandelbrot.Image;
@@ -23,15 +24,18 @@ import net.unstream.mandelbrot.UserRepository;
 import org.neo4j.graphdb.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -43,20 +47,52 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-public class FractalController {
+public class FractalController implements InitializingBean {
 	
 	@Inject
 	MandelbrotService mService;
 	
-	@Lazy @Autowired GraphDatabase graphDatabase;
 	@Lazy @Autowired FractalRepository fractalRepository;
-	@Lazy @Autowired ImageRepository imageRepository;
-	@Lazy @Autowired UserRepository userRepository;
+	@Autowired GraphDatabase graphDatabase;
+	@Autowired ImageRepository imageRepository;
+	@Autowired UserRepository userRepository;
+
+	@Autowired private CustomAuthenticationProvider customAuthenticationProvider;
 
 
 	
 	private final static Logger LOG = LoggerFactory.getLogger(FractalController.class);
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		LOG.info("Initializing database");
+		createDefaultUser("eric", "", false);
+		createDefaultUser("admin", "Truckle", true);
+	}
+
+	@Transactional
+	private void createDefaultUser(String name, String password, boolean isAdmin) {
+		Transaction tx = graphDatabase.beginTx();
+    	try {
+    		User user = userRepository.findByUsername("eric");
+
+	    	if (user == null) {
+	    		user = new User();
+	    		user.setUsername(name);
+	    		user.setAdmin(isAdmin);
+	        	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+	        	user.setPassword(encoder.encode(password));
+	        		userRepository.save(user);
+	    	}
+        	tx.success();
+    	} catch (Exception e) {
+    		tx.failure();
+    		LOG.error(e.getMessage(), e);
+    	} finally {
+    		tx.close();
+    	}
+	}
+	
     @RequestMapping("/listfractals")
     @Transactional(readOnly=true)
     public String listFractals(Model model, final HttpServletRequest request, String mode) {
@@ -321,14 +357,70 @@ public class FractalController {
         return "login";
     }
 
+    @RequestMapping(value="/profile", method=RequestMethod.GET )
+    public String profile(final Model model, final Principal principal) {
+    	model.addAttribute("page", "profile");
+		injectUser(model);
+		
+    	Transaction tx = graphDatabase.beginTx();
+    	try {
+    		User user = userRepository.findByUsername(principal.getName());
+    		model.addAttribute("profileUser", user);
+    		tx.success();
+    	} catch (IllegalArgumentException e) {
+    		tx.failure();
+    	} finally {
+    		tx.close();
+    	} 
+		
+        return "profile";
+    }
+
+    @RequestMapping(value="/profile", method=RequestMethod.DELETE )
+    public String profileDelete(Model model) {
+
+    	return "redirect:mandelbrot";
+    }
+
+    @RequestMapping(value="/profile", method=RequestMethod.POST )
+    @Transactional
+    public String profileSave(final Model model, final User user, Principal principal,
+    		String oldPassword, String newPassword) {
+    	
+    	Transaction tx = graphDatabase.beginTx();
+    	try {
+    		User oldUser = userRepository.findByUsername(principal.getName());
+    		oldUser.setUsername(user.getUsername());
+    		oldUser.setEmail(user.getEmail());
+    		if (newPassword.length() > 0 || oldPassword.length() > 0) {
+    	    	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+    	    	if (encoder.matches(oldPassword, oldUser.getPassword())) {
+    	    		oldUser.setPassword(encoder.encode(newPassword));
+    	    	} else {
+    	    		throw new RuntimeException("Passwords do not match.");
+    	    	}
+    		}
+    		userRepository.save(oldUser);
+    		model.addAttribute("profileUser", oldUser);
+    		tx.success();
+    	} catch (IllegalArgumentException e) {
+    		tx.failure();
+    	} finally {
+    		tx.close();
+    	} 
+    	model.addAttribute("page", "profile");
+		injectUser(model);
+        return "profile";
+    }
+
     @RequestMapping("/signup")
-    public String signup(User user, Model model) {
+    public String signup(User user, Model model, HttpServletRequest request) {
     	model.addAttribute("page", "login");
 		injectUser(model);
     	
     	Transaction tx = graphDatabase.beginTx();
     	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
-
+    	String password = user.getPassword();
     	user.setPassword(encoder.encode(user.getPassword()));
     	try {
     		userRepository.save(user);
@@ -339,8 +431,22 @@ public class FractalController {
     	} finally {
     		tx.close();
     	}
+    	user.setPassword(password);
+    	authenticateUserAndSetSession(user, request);
         return "redirect:mandelbrot";
     }
-
     
+    private void authenticateUserAndSetSession(User user, HttpServletRequest request) {
+        String username = user.getUsername();
+        String password = user.getPassword();
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+
+        // generate session if one doesn't exist
+        request.getSession();
+
+        token.setDetails(new WebAuthenticationDetails(request));
+        Authentication authenticatedUser = customAuthenticationProvider.authenticate(token);
+
+        SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
+    }    
 }
