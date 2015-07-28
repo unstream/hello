@@ -8,6 +8,8 @@ import java.util.concurrent.ForkJoinPool;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import net.unstream.fractal.api.domain.Colors;
+import net.unstream.fractal.api.domain.Fractal;
 import net.unstream.mandelbrot.alg.MandelbrotAlg;
 import net.unstream.mandelbrot.alg.MandelbrotAlgForkJoin;
 import net.unstream.mandelbrot.alg.MandelbrotAlgStream;

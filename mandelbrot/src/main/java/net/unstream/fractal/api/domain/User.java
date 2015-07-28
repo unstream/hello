@@ -1,4 +1,4 @@
-package net.unstream.mandelbrot;
+package net.unstream.fractal.api.domain;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;

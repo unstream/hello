@@ -1,4 +1,4 @@
-package net.unstream.mandelbrot;
+package net.unstream.fractal;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -11,6 +11,10 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import net.unstream.fractal.api.MandelbrotService;
+import net.unstream.fractal.api.MandelbrotServiceException;
+import net.unstream.fractal.api.domain.Colors;
+import net.unstream.fractal.api.domain.Fractal;
 import net.unstream.mandelbrot.alg.MandelbrotAlg;
 
 import org.apache.sanselan.ImageFormat;
@@ -34,7 +38,7 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	}
 	
 	/* (non-Javadoc)
-	 * @see net.unstream.mandelbrot.MandelbrotService#computeMandelBrotPng(net.unstream.mandelbrot.Fractal)
+	 * @see net.unstream.fractal.MandelbrotService#computeMandelBrotPng(net.unstream.fractal.Fractal)
 	 */
 	@Async
 	public Future<byte[]> computeMandelBrotPng(final Fractal fractal,
@@ -59,7 +63,7 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	}
 
 	/* (non-Javadoc)
-	 * @see net.unstream.mandelbrot.MandelbrotService#computeColorGradientPng(net.unstream.mandelbrot.Fractal)
+	 * @see net.unstream.fractal.MandelbrotService#computeColorGradientPng(net.unstream.fractal.Fractal)
 	 */
 	public byte[] computeColorGradientPng(final Colors colors) throws MandelbrotServiceException {
 		try {

@@ -8,13 +8,13 @@ import javax.inject.Named;
 
 import org.apache.commons.math3.complex.Complex;
 
-import net.unstream.mandelbrot.Fractal;
+import net.unstream.fractal.api.domain.Fractal;
 
 @Named("forkjoin")
 public class MandelbrotAlgForkJoin implements MandelbrotAlg {
 	
 	/* (non-Javadoc)
-	 * @see net.unstream.mandelbrot.MandelBrotAlg#compute(net.unstream.mandelbrot.Fractal, int)
+	 * @see net.unstream.fractal.MandelBrotAlg#compute(net.unstream.fractal.Fractal, int)
 	 */
 	@Override
 	public Map<Integer, double[]> compute(final Fractal fractal, final int width) {

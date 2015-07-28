@@ -1,6 +1,9 @@
-package net.unstream.mandelbrot;
+package net.unstream.fractal.api;
 
 import java.util.concurrent.Future;
+
+import net.unstream.fractal.api.domain.Colors;
+import net.unstream.fractal.api.domain.Fractal;
 
 import org.springframework.scheduling.annotation.Async;
 

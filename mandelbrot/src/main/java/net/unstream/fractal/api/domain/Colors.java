@@ -1,4 +1,4 @@
-package net.unstream.mandelbrot;
+package net.unstream.fractal.api.domain;
 
 import java.util.Arrays;
 

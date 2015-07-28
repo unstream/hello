@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -49,13 +50,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             	.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) 
                 .permitAll()
                 .and()
+             .anonymous()
+             	.principal("anonymous")
+             	.and()
              .rememberMe().tokenRepository(persistentTokenRepository())
              	.key("fractal-key")
-//             	.rememberMeServices(rememberMeServices)
              	.tokenValiditySeconds(1209600);
-
     }
-    
+
 	@Bean
 	public PersistentTokenRepository persistentTokenRepository() {
 		PersistentTokenRepository db = new CustomPersistentTokenRepository();

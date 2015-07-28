@@ -2,7 +2,7 @@ package net.unstream.mandelbrot.alg;
 
 import java.util.Map;
 
-import net.unstream.mandelbrot.Fractal;
+import net.unstream.fractal.api.domain.Fractal;
 
 public interface MandelbrotAlg {
 

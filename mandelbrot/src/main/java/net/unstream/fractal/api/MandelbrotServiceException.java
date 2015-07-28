@@ -1,4 +1,4 @@
-package net.unstream.mandelbrot;
+package net.unstream.fractal.api;
 
 public class MandelbrotServiceException extends RuntimeException {
 

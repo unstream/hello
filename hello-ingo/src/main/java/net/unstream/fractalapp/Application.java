@@ -18,11 +18,11 @@ public class Application {
 
 	
 	@Configuration
-	@EnableNeo4jRepositories(basePackages = "net.unstream.mandelbrot")
+	@EnableNeo4jRepositories(basePackages = "net.unstream.fractal")
 	static class ApplicationConfig extends Neo4jConfiguration {
 		
 		public ApplicationConfig() {
-			setBasePackage("net.unstream.mandelbrot");
+			setBasePackage("net.unstream.fractal");
 		}
 		
 		@Bean

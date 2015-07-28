@@ -1,4 +1,6 @@
-package net.unstream.mandelbrot;
+package net.unstream.fractal.db;
+
+import net.unstream.fractal.api.domain.Image;
 
 import org.springframework.data.repository.CrudRepository;
 
