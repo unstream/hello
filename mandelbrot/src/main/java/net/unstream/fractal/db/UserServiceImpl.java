@@ -6,6 +6,7 @@ import net.unstream.fractal.api.domain.User;
 
 import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class UserServiceImpl implements UserService {
 
-	@Autowired private GraphDatabase graphDatabase;
+	@Lazy @Autowired private GraphDatabase graphDatabase;
 	@Autowired private UserRepository userRepository;
 
 	/* (non-Javadoc)

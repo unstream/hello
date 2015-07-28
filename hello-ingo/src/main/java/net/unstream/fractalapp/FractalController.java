@@ -41,17 +41,10 @@ public class FractalController {
 	@Inject
 	MandelbrotService mService;
 	
-//	@Lazy @Autowired private FractalRepository fractalRepository;
-//	@Autowired private  GraphDatabase graphDatabase;
-//	@Autowired private ImageRepository imageRepository;
-
 	@Autowired private FractalService fractalService;
 	@Autowired private UserService userService;
 
 	@Autowired private CustomAuthenticationProvider customAuthenticationProvider;
-
-
-
 	
 	private final static Logger LOG = LoggerFactory.getLogger(FractalController.class);
 
