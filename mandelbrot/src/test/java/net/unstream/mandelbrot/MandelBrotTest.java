@@ -3,10 +3,6 @@ package net.unstream.mandelbrot;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.concurrent.ForkJoinPool;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import net.unstream.fractal.api.domain.Colors;
 import net.unstream.fractal.api.domain.Fractal;
@@ -69,7 +65,7 @@ Time[MandelBrotAlgForkJoin]: 683
 					for(int w: sizes) {
 						Fractal f = new Fractal();
 						f.setColors(twoColors(i));
-						Map<Integer, double[]> lines = alg.compute(f, w);
+						alg.compute(f, w);
 					}
 				}
 				System.out.println("Time[" + alg.getClass().getSimpleName() + ", " + threshold + "]: "
@@ -93,7 +89,7 @@ Time[MandelBrotAlgForkJoin]: 683
 						f.setC1(0.001d);
 						f.setC1i(0.001d);
 						f.setColors(twoColors(100));
-						Map<Integer, double[]> lines = new MandelbrotAlgForkJoin().compute(f, 5);
+						new MandelbrotAlgForkJoin().compute(f, 5);
 	}
 	
 }
