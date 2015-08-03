@@ -26,4 +26,11 @@ public interface UserService {
 	 */
 	public User save(User user);
 
+	/**
+	 * Delete a user.
+	 *
+	 * @param name of the user.
+	 */
+	public void delete(String name);
+
 }

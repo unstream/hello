@@ -11,6 +11,7 @@ import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Component
 public class UserServiceImpl implements UserService {
 
@@ -37,11 +38,32 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see net.unstream.fractal.api.UserService#save(net.unstream.fractal.api.domain.User)
+	 */
 	@Transactional
 	public User save(User user) {
 		Transaction tx = graphDatabase.beginTx();
     	try {
     		return userRepository.save(user);
+    	} catch (Exception e) {
+    		tx.failure();
+    		throw e;
+		} finally {
+			tx.success();
+			tx.close();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see net.unstream.fractal.api.UserService#delete(java.lang.String)
+	 */
+	@Transactional
+	public void delete(final String name) {
+		Transaction tx = graphDatabase.beginTx();
+    	try {
+    		User user = userRepository.findByUsername(name);
+    		userRepository.delete(user);
     	} catch (Exception e) {
     		tx.failure();
     		throw e;

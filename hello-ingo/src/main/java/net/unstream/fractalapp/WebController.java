@@ -1,7 +1,9 @@
 package net.unstream.fractalapp;
 
 import java.security.Principal;
+import java.util.function.Consumer;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import net.unstream.fractal.api.UserNotFoundException;
@@ -18,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -25,12 +28,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
+@Component
 public class WebController implements InitializingBean {
 	
 	@Autowired private UserService userService;
 	@Autowired private CustomAuthenticationProvider customAuthenticationProvider;
+	private Consumer<String> userDeletionCallback;
 
 	private final static Logger LOG = LoggerFactory.getLogger(WebController.class);
+
+	/**
+	 * Set consumer to be called when a user is deleted.
+	 * @param callback Consumer to be called.
+	 */
+	public void setUserDeletionCallback(Consumer<String> callback) {
+		this.userDeletionCallback = callback;
+	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -56,13 +69,15 @@ public class WebController implements InitializingBean {
         return "profile";
     }
 
-    @RequestMapping(value="/profile", method=RequestMethod.DELETE )
-    public String profileDelete(Model model) {
-
+    @RequestMapping(value="/profileDelete", method=RequestMethod.POST )
+    public String profileDelete(Model model, final Principal principal, HttpServletRequest request) throws ServletException {
+    	userDeletionCallback.accept(principal.getName());
+    	userService.delete(principal.getName());
+    	request.logout();
     	return "redirect:mandelbrot";
     }
 
-    @RequestMapping(value="/profile", method=RequestMethod.POST )
+	@RequestMapping(value="/profile", method=RequestMethod.POST )
     @Transactional
     public String profileSave(final Model model, final User user, Principal principal,
     		String oldPassword, String newPassword) throws UserNotFoundException {

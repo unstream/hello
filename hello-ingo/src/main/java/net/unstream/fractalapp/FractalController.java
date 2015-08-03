@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import net.unstream.fractalapp.security.CustomAuthenticationProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,19 +40,37 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-public class FractalController {
+public class FractalController implements InitializingBean {
 	
 	@Inject
 	MandelbrotService mService;
 	
 	@Autowired private FractalService fractalService;
 	@Autowired private UserService userService;
+	@Autowired private WebController webController;
 
 	@Autowired private CustomAuthenticationProvider customAuthenticationProvider;
 	
+	
 	private final static Logger LOG = LoggerFactory.getLogger(FractalController.class);
 
-    @RequestMapping("/listfractals")
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		webController.setUserDeletionCallback(user -> removeUserFromFractals(user));
+	}
+	
+    private void removeUserFromFractals(final String username) {
+    	//TODO: Use a filter to improve performance
+    	List<Fractal> fractals = fractalService.findAll();
+    	for (Fractal fractal : fractals) {
+    		if (fractal.getCreator().getUsername().equals(username)) {
+    			fractal.setCreator(null);
+    			fractalService.save(fractal);
+    		}
+    	}
+    }
+
+	@RequestMapping("/listfractals")
     @Transactional(readOnly=true)
     public String listFractals(Model model, final HttpServletRequest request, String mode) {
 		HttpSession session = request.getSession();
@@ -234,6 +254,4 @@ public class FractalController {
     public String about(Model model) {
         return "about";
     }
-
-
 }
