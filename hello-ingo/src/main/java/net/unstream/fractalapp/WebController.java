@@ -71,7 +71,9 @@ public class WebController implements InitializingBean {
 
     @RequestMapping(value="/profileDelete", method=RequestMethod.POST )
     public String profileDelete(Model model, final Principal principal, HttpServletRequest request) throws ServletException {
-    	userDeletionCallback.accept(principal.getName());
+    	if (userDeletionCallback != null) {
+    		userDeletionCallback.accept(principal.getName());
+    	}
     	userService.delete(principal.getName());
     	request.logout();
     	return "redirect:mandelbrot";
