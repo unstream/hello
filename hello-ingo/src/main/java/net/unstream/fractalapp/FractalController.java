@@ -18,6 +18,7 @@ import net.unstream.fractal.api.UserService;
 import net.unstream.fractal.api.domain.Fractal;
 import net.unstream.fractal.api.domain.Image;
 import net.unstream.fractal.api.domain.User;
+import net.unstream.fractalapp.security.Authorities;
 import net.unstream.fractalapp.security.CustomAuthenticationProvider;
 
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -174,22 +176,28 @@ public class FractalController {
 		Model model, Principal principal) throws ExecutionException, InterruptedException, UserNotFoundException {
     	HttpSession session = request.getSession();
     	if (fractal.getId() == null) {
+    		//Create a new Image
         	Image thumb = new Image();
     		thumb.setHeight(64);
     		thumb.setWidth(64);
     		thumb.setImage(((Future<byte[]>) session.getAttribute(thumbId)).get());
         	Image full = new Image();
     		full.setImage(((Future<byte[]>) session.getAttribute(imgId)).get());
-
-    		fractal.setThumbnail(thumb);
-    		fractal.setImage(full);
     		User user = userService.findByUsername(principal.getName());
     		fractal.setCreator(user);
-    		
+    		fractal.setThumbnail(thumb);
+    		fractal.setImage(full);
     	} else {
     		Fractal savedFractal = fractalService.findById(fractal.getId());
     		fractal.setImage(savedFractal.getImage());
     		fractal.setThumbnail(savedFractal.getThumbnail());
+    		if (!(request.isUserInRole(Authorities.ROLE_ADMIN)) && (!principal.getName().equals(fractal.getCreator().getUsername()))) {
+    			throw new AccessDeniedException("You are only allowed to save fractals you created yourself.");
+    		}
+    		if (!"admin".equals(principal.getName())) {
+        		User user = userService.findByUsername(principal.getName());
+        		fractal.setCreator(user);
+    	    }
     	}
     	fractalService.save(fractal);
 		model.addAttribute("fractal", fractal);
@@ -202,7 +210,15 @@ public class FractalController {
     		consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @Transactional
-    public void mandelbrotDelete(@PathVariable Long id) {
+    public void mandelbrotDelete(@PathVariable Long id, HttpServletRequest request, Principal principal) {
+    	Fractal fractal = fractalService.findById(id);
+    	if (fractal == null) { 
+    		throw new RuntimeException("Internal error");
+    	}
+    	if (!(request.isUserInRole(Authorities.ROLE_ADMIN)) && (!principal.getName().equals(fractal.getCreator().getUsername()))) {
+			throw new AccessDeniedException("You are only allowed to delete fractals you created yourself.");
+		}
+
        	fractalService.delete(id);
     }
     

@@ -40,7 +40,11 @@ public class WebController implements InitializingBean {
 	}
     
     @RequestMapping("/login")
-    public String login(Model model) {
+    public String login(Model model, final HttpServletRequest request) {
+    	String referrer = request.getHeader("Referer");
+        if(referrer!=null){
+            request.getSession().setAttribute("url_prior_login", referrer);
+        }
         return "login";
     }
 
