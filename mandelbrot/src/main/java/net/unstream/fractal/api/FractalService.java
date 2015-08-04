@@ -5,6 +5,9 @@ import java.util.List;
 import net.unstream.fractal.api.domain.Fractal;
 import net.unstream.fractal.api.domain.Image;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 /**
  * Persistence service to store and retrieve fractals and images (of fractals).
  * This service defines the transactional boundary.
@@ -48,6 +51,8 @@ public interface FractalService {
 	 * @return the image entity
 	 */
 	public abstract Image findImageById(long id);
+
+	Page<Fractal> findAll(Pageable pageable);
 
 
 }

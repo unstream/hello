@@ -40,6 +40,7 @@
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity3</artifactId>
 		</dependency>
+		
 		<!-- 	Comment in in order to report to an internal admin server. 
 				See admin.properties for details. 
  		<dependency>

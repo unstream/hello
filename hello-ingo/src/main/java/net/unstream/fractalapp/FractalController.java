@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -72,14 +75,15 @@ public class FractalController implements InitializingBean {
 
 	@RequestMapping("/listfractals")
     @Transactional(readOnly=true)
-    public String listFractals(Model model, final HttpServletRequest request, String mode) {
+    public String listFractals(Pageable pageable, Model model, final HttpServletRequest request, String mode) {
 		HttpSession session = request.getSession();
-        
         if (mode == null) {
 			mode = (String) session.getAttribute("mode");
         }
-    	List<Fractal> fractals = fractalService.findAll();
-		model.addAttribute("fractals", fractals);
+        Sort sort = new Sort(Sort.Direction.ASC, "createdDate");
+        Page<Fractal> page = fractalService.findAll(pageable);
+        model.addAttribute("fractalsPage", page);
+        model.addAttribute("fractals", page.getContent());
 
 		if ("tiles".equals(mode)) {
 			session.setAttribute("mode", "tiles");
@@ -211,7 +215,7 @@ public class FractalController implements InitializingBean {
     		Fractal savedFractal = fractalService.findById(fractal.getId());
     		fractal.setImage(savedFractal.getImage());
     		fractal.setThumbnail(savedFractal.getThumbnail());
-    		if (!(request.isUserInRole(Authorities.ROLE_ADMIN)) && (!principal.getName().equals(fractal.getCreator().getUsername()))) {
+    		if (!(request.isUserInRole(Authorities.ROLE_ADMIN)) && (!principal.getName().equals(savedFractal.getCreator().getUsername()))) {
     			throw new AccessDeniedException("You are only allowed to save fractals you created yourself.");
     		}
     		if (!"admin".equals(principal.getName())) {

@@ -68,9 +68,12 @@
       <div class="panel panel-default">
 			<div class="panel-heading clearfix">
 				<h4 class="panel-title pull-left" style="padding-top: 7.5px;">Mandelbrot Sets</h4>
-				<div class="btn-group pull-right">
-					<a th:href="@{/listfractals(mode=list)}" href="listfractals.html" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list"></span></a>
-					<a th:href="@{/listfractals(mode=tiles)}" href="listfractalstiles.html" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-large"></span></a>
+				
+					<div class="btn-group pull-right">
+						<a th:href="@{/listfractals(mode=list)}" href="listfractals.html" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list"></span></a>
+						<a th:href="@{/listfractals(mode=tiles)}" href="listfractalstiles.html" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-large"></span></a>
+					</div>
+
 				</div>
 			</div>
 
@@ -105,7 +108,31 @@
 					</tr>
 				</tbody>
   			</table>
-		</div>
+  			<!-- TODO: Remove copy/past by using fragment for navbar -->
+  			<div class="panel-footer">
+	  			<nav style="text-align:center">
+				    <ul class="pagination" style="margin: 0px;">
+				        <li th:class="${fractalsPage.number eq 0} ? 'disabled' : ''">
+				            <a th:if="${not fractalsPage.first}" th:href="@{${'/listfractals'}(page=${fractalsPage.number-1},size=9)}"><span class="glyphicon glyphicon-menu-left"></span></a>
+				            <a th:if="${fractalsPage.first}" href="javascript:void(0);"><span class="glyphicon glyphicon-menu-left"></span></a>
+				        </li>
+				
+				        <li th:each="pageNo : ${#numbers.sequence(0, fractalsPage.totalPages - 1)}" th:class="${fractalsPage.number eq pageNo}? 'active' : ''">
+				            <a th:if="${fractalsPage.number  eq pageNo}" href="javascript:void(0);">
+				                <span th:text="${pageNo + 1}"></span>
+				            </a>
+				            <a th:if="${not (fractalsPage.number  eq pageNo)}" th:href="@{${'/listfractals'}(page=${pageNo},size=9)}">
+				                <span th:text="${pageNo + 1}"></span>
+				            </a>
+				
+				        </li>
+				        <li th:class="${fractalsPage.number + 1 ge fractalsPage.totalPages} ? 'disabled' : ''">
+				            <a th:if="${not fractalsPage.last}" th:href="@{${'/listfractals'}(page=${fractalsPage.number+1},size=9)}"><span class="glyphicon glyphicon-menu-right"></span></a>
+				            <a th:if="${fractalsPage.last}" href="javascript:void(0);"><span class="glyphicon glyphicon-menu-right"></span></a>
+				        </li>
+				    </ul>
+			    </nav>
+			</div>				
 
     </div><!-- /.container -->
 

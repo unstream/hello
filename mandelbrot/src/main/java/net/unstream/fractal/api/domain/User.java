@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
-public class User {
+public class User extends AbstractEntity {
     @GraphId 
     private Long id;
     

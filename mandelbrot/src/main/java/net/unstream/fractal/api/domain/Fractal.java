@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 @NodeEntity
-public class Fractal {
+public class Fractal extends AbstractEntity {
 	
 	
 	@GraphId Long id;

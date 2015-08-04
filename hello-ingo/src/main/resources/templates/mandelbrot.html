@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.springframework.org/security/tags">
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -227,8 +228,15 @@
 									</ul>
 								</div>
  								-->
-	
-								<a th:classappend="${user}=='anonymous'? disabled" href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" data-toggle="modal">Save</a>
+								<div sec:authorize="hasRole('ROLE_USER')">
+								
+								</div>
+								<div sec:authorize="hasRole('ROLE_USER')">
+								
+								</div>
+								
+								<a sec:authorize="hasRole('ROLE_USER')" href="#myModal" role="button" class="btn btn-default col-md-3 pull-right" data-toggle="modal">Save</a>
+								<a sec:authorize="!hasRole('ROLE_USER')" href="#myModal" role="button" class="disabled btn btn-default col-md-3 pull-right" data-toggle="modal">Save</a>
 
 							</div>
 						</form>
