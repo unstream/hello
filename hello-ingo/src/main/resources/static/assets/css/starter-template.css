@@ -14,3 +14,18 @@ body {
     top: 5px;
     right: 5px;
 }
+a.darken {
+    display: inline-block;
+    background: #337ab7;
+    padding: 0;
+    border:0
+}
+
+a.darken img {
+    display: block;
+}
+
+a.darken:hover img {
+    background: #23527c;
+    border:0
+}

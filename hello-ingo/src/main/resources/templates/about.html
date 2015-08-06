@@ -16,7 +16,6 @@
 	<!-- Bootstrap core CSS -->
 	<link rel="stylesheet" type="text/css" th:href="@{/dist/css/bootstrap.min.css}" href="../static/dist/css/bootstrap.min.css" />
 	
-	
 	<!-- Custom styles for this template -->
 	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/starter-template.css}" href="../static/assets/css/starter-template.css" />
 	<script th:src="@{/assets/js/ie-emulation-modes-warning.js}" src="../static/assets/js/ie-emulation-modes-warning.js"></script>
@@ -60,23 +59,27 @@
 
       <div class="starter-template">
         <h1>About</h1>
-        <p class="lead">Explore the Mandelbrot Set.</p>
         <p class="text-justify">
         	Using this web application you can explore the   
         	<a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot Set</a>.
-        	My first images of the Mandelbrot Set I computed on a Sinclair ZX Spektrum using HiSoft Pascal 4.
-        <br/>	 
+        	My first images of the Mandelbrot set I computed on a Sinclair ZX Spektrum using HiSoft Pascal 4.
+	        <br/>	 
         	This is my second try - but mainly this is about toying around with some features of 
         	<a href="http://projects.spring.io/spring-boot/">Spring Boot</a>, 
-        	<a href="http://projects.spring.io/spring-framework/">Spring Framework</a>,
-        	<a href="http://neo4j.com/">neo4j</a>, 
+        	the <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>,
+        	the graph database <a href="http://neo4j.com/">Neo4j</a>, 
         	<a href="http://getbootstrap.com/">Bootstrap</a> and 
         	<a href="http://www.thymeleaf.org/">Thymeleaf</a>.	
         </p>
-      </div>
-
+        <p class="text-justify">
+       		The sources for this project are shared on Github.
+       		<a class="btn btn-link darken" href="http://github.com/unstream/hello">
+       			<img th:src="@{/assets/images/GitHub-Mark-Invers-32px.png}" src="../static/assets/images/GitHub-Mark-Invers-32px.png" class="img-responsive" alt="View at Github"></img>
+       		</a>
+        </p>
+		</div>
     </div><!-- /.container -->
-
+	<script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
 
 	<script th:src="@{/dist/js/bootstrap.min.js}" src="../static/dist/js/bootstrap.min.js"></script>
 	
