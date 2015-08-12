@@ -107,6 +107,7 @@ public class FractalController implements InitializingBean {
 		if (reset) {
     		fractal = new Fractal();
     	}
+		
     	HttpSession session = request.getSession();
 		if (fractal == null) {
 			fractal = (Fractal) session.getAttribute("fractal");
@@ -114,6 +115,7 @@ public class FractalController implements InitializingBean {
 				fractal = new Fractal(); 
 			}
 		}
+
 		/* detach the object after submit */
 		fractal.setId(null);
 		session.setAttribute("fractal", fractal);

@@ -179,7 +179,7 @@
 
 
 							<div class="form-group" th:classappend="${#fields.hasErrors('c0')}? has-error">
-								<label for="x1" class="col-md-6 control-label">C<sub>0</sub></label>
+								<label for="x1" class="col-md-6 control-label">&#x0211C;(c<sub>0</sub>)</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c0" name="c0"
 										th:field="*{c0}" value="-1.5" />
@@ -187,26 +187,49 @@
 							</div>
 
 							<div class="form-group" th:classappend="${#fields.hasErrors('c0i')}? has-error">
-								<label for="y1" class="col-md-6 control-label">C<sub>0</sub> i</label>
+								<label for="y1" class="col-md-6 control-label">&#x02111;(c<sub>0</sub>)</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c0i" name="c0i"
 										th:field="*{c0i}" value="-1" />
 								</div>
 							</div>
 							<div class="form-group" th:classappend="${#fields.hasErrors('c1')}? has-error">
-								<label for="x2" class="col-md-6 control-label">C<sub>1</sub></label>
+								<label for="x2" class="col-md-6 control-label">&#x0211C;(c<sub>1</sub>)</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c1" name="c1"
 										th:field="*{c1}" value="0.5"  />
 								</div>
 							</div>
 							<div class="form-group" th:classappend="${#fields.hasErrors('c1i')}? has-error">
-								<label for="y2" class="col-md-6 control-label">C<sub>1</sub> i</label>
+								<label for="y2" class="col-md-6 control-label">&#x02111;(c<sub>1</sub>)</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="c1i" name="c1i"
 										th:field="*{c1i}" value="1"  />
 								</div>
 							</div>
+							<div class="form-group" th:classappend="${#fields.hasErrors('renderJulia')}? has-error">
+								<div class="col-md-6"><label for="renderJulia" class="control-label pull-right">Render Julia set</label></div>
+								<div class="col-md-6">
+										<input type="checkbox" class="checkbox" id="renderJulia" name="renderJulia"
+											th:field="*{renderJulia}" value="1"  />
+								</div>
+							</div>
+							<div class="form-group" id="cJuliaFG" th:hidden="*{!renderJulia}" th:classappend="${#fields.hasErrors('cJulia')}? has-error">
+								<label for="x2" class="col-md-6 control-label">&#x0211C;(c)</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control" id="cJulia" name="cJulia"
+										th:field="*{cJulia}" value="0"  />
+								</div>
+							</div>
+							<div class="form-group" id="ciJuliaFG" th:hidden="*{!renderJulia}" th:classappend="${#fields.hasErrors('ciJulia')}? has-error">
+								<label for="y2" class="col-md-6 control-label">&#x02111;(c)</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control" id="ciJulia" name="ciJulia"
+										th:field="*{ciJulia}" value="0"  />
+								</div>
+							</div>
+
+
 							<div class="btn-toolbar">
 								<button type="submit" formmethod="get" class="btn btn-primary col-md-3 pull-right" formaction="../mandelbrot" th:formaction="@{/mandelbrot}" >Submit</button>
 								
@@ -275,6 +298,25 @@
 			$('#save-modal-submit').click();
 			return false;
 		});
+
+		//Show Julia Coordinates when Julia rendering gets enabled
+		$("#renderJulia").on("change", function () {
+			if (this.checked) {
+				$("#c0").val(-2);
+				$("#c0i").val(-2);
+				$("#c1").val(2);
+				$("#c1i").val(2);
+
+				$("#cJuliaFG").prop('hidden', false);
+				$("#ciJuliaFG").prop('hidden', false);
+			} else {
+				$("#cJuliaFG").prop('hidden', true);
+				$("#ciJuliaFG").prop('hidden', true);
+			}
+			return true;
+		});
+
+	
 	});
 	/*]]>*/
 	</script>

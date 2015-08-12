@@ -20,6 +20,10 @@ public class Fractal extends AbstractEntity {
 	private double c1 = 0.5d;
 	private double c1i = 1d;
 
+	private boolean renderJulia = false;
+	private double cJulia = 0d;
+	private double ciJulia = 0d;
+
 	@RelatedTo(type="Parent", direction=Direction.OUTGOING)
     private @Fetch Fractal parent;
 
@@ -63,6 +67,32 @@ public class Fractal extends AbstractEntity {
 	public void setC1i(double c1i) {
 		this.c1i = c1i;
 	}
+
+	public boolean isRenderJulia() {
+		return renderJulia;
+	}
+	public void setRenderJulia(boolean renderJulia) {
+		this.renderJulia = renderJulia;
+	}
+	public double getcJulia() {
+		if (!isRenderJulia()) {
+			setcJulia(getC0() + 0.5d * (getC1() - getC0()));
+		}
+		return cJulia;
+	}
+	public void setcJulia(double cJulia) {
+		this.cJulia = cJulia;
+	}
+	public double getCiJulia() {
+		if (!isRenderJulia()) {
+			setCiJulia(getC0i() + 0.5d * (getC1i() - getC0i()));
+		}
+		return ciJulia;
+	}
+	public void setCiJulia(double ciJulia) {
+		this.ciJulia = ciJulia;
+	}
+	
 	public Long getId() {
 		return id;
 	}
