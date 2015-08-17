@@ -12,9 +12,7 @@ import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.neo4j.core.GraphDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +56,6 @@ public class FractalServiceImpl implements FractalService {
 	public Page<Fractal> findAll(Pageable pageable) {
 		Transaction tx = graphDatabase.beginTx();
 		try {
-	    	List<Fractal> fractals = new ArrayList<Fractal>();
 			Page<Fractal> page = fractalRepository.findAll(pageable);
 			return page;
 		} catch (Exception e) {

@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import net.unstream.fractal.alg.FractalAlg;
-import net.unstream.fractal.alg.obsolete.JuliaAlg;
 import net.unstream.fractal.api.MandelbrotService;
 import net.unstream.fractal.api.MandelbrotServiceException;
 import net.unstream.fractal.api.domain.Colors;

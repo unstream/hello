@@ -4,61 +4,56 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
-import net.unstream.fractal.alg.ForkJoin;
-import net.unstream.fractal.alg.obsolete.MandelbrotAlgForkJoin;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import net.unstream.fractal.alg.obsolete.MandelbrotAlgStream;
-import net.unstream.fractal.alg.obsolete.MandelbrotTask;
 import net.unstream.fractal.api.domain.Colors;
 import net.unstream.fractal.api.domain.Fractal;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AlgorithmsTestContext.class})
 public class MandelBrotTest {
+	
+	@Inject @Named(value="forkjoin")
+	FractalAlg alg;
 
 	@Test
-	public void testZeroZero() {
+	public void testMandelbrotZeroZero() {
 		Fractal f = new Fractal();
 		f.setColors(twoColors(100));
 		f.setC0(0d);
 		f.setC0i(0d);
 		f.setC1(0.001d);
 		f.setC1i(0.001d);
-		Map<Integer, double[]> lines = new MandelbrotAlgForkJoin().compute(f, 1);
+		Map<Integer, double[]> lines = alg.compute(f, 1);
 		assertTrue(lines.get(0)[0] == 100d);
 	}
 
 	@Test
-	public void testTwoZero() {
+	public void testMandelbrotTwoZero() {
 		Fractal f = new Fractal();
 		f.setColors(twoColors(100));
 		f.setC0(2d);
 		f.setC0i(0d);
 		f.setC1(2.001d);
 		f.setC1i(0.001d);
-		Map<Integer, double[]> lines = new MandelbrotAlgForkJoin().compute(f, 1);
+		Map<Integer, double[]> lines = alg.compute(f, 1);
 		assertTrue(lines.get(0)[0] < 50);
 	}
 
-	/**
-	 * 
-Time[MandelBrotAlgStream]: 2302
-Time[MandelBrotAlgForkJoin]: 824
-Time[MandelBrotAlgStream]: 2120
-Time[MandelBrotAlgForkJoin]: 663
-Time[MandelBrotAlgStream]: 2022
-Time[MandelBrotAlgForkJoin]: 651
-Time[MandelBrotAlgStream]: 2179
-Time[MandelBrotAlgForkJoin]: 671
-Time[MandelBrotAlgStream]: 2111
-Time[MandelBrotAlgForkJoin]: 683
-	 */
 	@Test
 	public void testBenchmark() {
 		int[] iterations = {10, 100};
 		int[] sizes = {100, 200, 400};
-		FractalAlg[] algorithms = {new MandelbrotAlgStream(), new MandelbrotAlgForkJoin(), new ForkJoin()};
+		FractalAlg[] algorithms = {new MandelbrotAlgStream(), alg};
 		for (int threshold = 20; threshold <= 80; threshold += 20) {
-			MandelbrotTask.setThreshold(threshold);
+			FractalTask.setThreshold(threshold);
 			for (FractalAlg alg: algorithms) {
 				long start = System.currentTimeMillis();
 				for (int i : iterations) {
@@ -89,7 +84,7 @@ Time[MandelBrotAlgForkJoin]: 683
 						f.setC1(0.001d);
 						f.setC1i(0.001d);
 						f.setColors(twoColors(100));
-						new MandelbrotAlgForkJoin().compute(f, 5);
+						alg.compute(f, 5);
 	}
 	
 	@Test

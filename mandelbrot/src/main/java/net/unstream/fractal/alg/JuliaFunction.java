@@ -15,14 +15,14 @@ public class JuliaFunction implements Function<Complex, Double> {
 	@Override
 	public Double apply(Complex z) {
 		int i = 0;
-		double x = 0;
-		double y = 0;
+		double x = z.getReal();
+		double y = z.getImaginary();
 		double x2, y2;
 		do {
 			x2 = x * x;
 			y2 = y * y;
-			y = 2 * x * y + z.getImaginary();
-			x = x2 - y2 + z.getReal();
+			y = 2 * x * y + c.getImaginary();
+			x = x2 - y2 + c.getReal();
 			i++;
 		} while (i < maxIterations && (x2 + y2) < 4);
 		double nsmooth;
@@ -32,26 +32,5 @@ public class JuliaFunction implements Function<Complex, Double> {
 			nsmooth = 1d + i - Math.log(Math.log(Math.sqrt(x*x + y*y)))/Math.log(2);
 		}
 		return nsmooth;
-	}
-
-	
-//	@Override
-	public Double apply2(Complex z) {
-        for (int i = 0; i < maxIterations; i++) {
-        	
-//			x2 = x * x;
-//			y2 = y * y;
-//			y = 2 * x * y + z.getImaginary();
-//			x = x2 - y2 + z.getReal();
-//			z^2 + c	= (zr+zi i) (zr+zi i) + c
-//        			= zr^2 - zi^2 + cr + (2 zr zi + ci) i 
-        	
-            if (z.abs() > 2.0) {
-            	double nsmooth = 1d + i - Math.log(Math.log(z.abs()))/Math.log(2);
-            	return nsmooth;
-            }
-            z = z.multiply(z).add(c);
-        }
-        return new Double(maxIterations - 1);
 	}
 }
