@@ -1,4 +1,4 @@
-package net.unstream.mandelbrot.alg;
+package net.unstream.fractal.alg.obsolete;
 
 import java.util.Map;
 import java.util.concurrent.RecursiveAction;
@@ -7,26 +7,30 @@ import java.util.function.BiFunction;
 import org.apache.commons.math3.complex.Complex;
 
 @SuppressWarnings("serial")
-public class MandelbrotTask extends RecursiveAction {
+public class JuliaTask extends RecursiveAction {
 	private static int sThreshold = 35;
 
 	private Map<Integer, double[]> lines;
 
-	final private Complex c0;
+	final private Complex z0;
 	final private int w;
 	final private int h;
 	final private int iterations;
 
+	private Complex c;
+	
 	final private double step;
 	final private int x0;
 	final private int y0;
 	
 	private boolean inside = true;
 
-	public MandelbrotTask(final Complex myC0, final double myStep,
+
+	public JuliaTask(final Complex myZ0, final Complex myC, final double myStep,
 			final int myX0, final int myY0, final int myW, final int myH,
 			final int myIterations, Map<Integer, double[]> myLines) {
-		c0 = myC0;
+		z0 = myZ0;
+		c = myC;
 		w = myW;
 		h = myH;
 		step = myStep;
@@ -46,10 +50,10 @@ public class MandelbrotTask extends RecursiveAction {
 			final int h0 = h / 2;
 			final int h1 = h - h0;
 			invokeAll(
-				new MandelbrotTask(c0, step, x0, y0, w0, h0, iterations, lines), 
-				new MandelbrotTask(c0, step, x0 + w0, y0, w1, h0, iterations, lines), 
-				new MandelbrotTask(c0, step, x0, y0 + h0, w0, h1, iterations, lines), 
-				new MandelbrotTask(c0, step, x0 + w0, y0 + h0, w1, h1, iterations, lines)
+				new JuliaTask(z0, c, step, x0, y0, w0, h0, iterations, lines), 
+				new JuliaTask(z0, c, step, x0 + w0, y0, w1, h0, iterations, lines), 
+				new JuliaTask(z0, c, step, x0, y0 + h0, w0, h1, iterations, lines), 
+				new JuliaTask(z0, c, step, x0 + w0, y0 + h0, w1, h1, iterations, lines)
 			);
 		}
 	}
@@ -68,23 +72,23 @@ public class MandelbrotTask extends RecursiveAction {
 	}
 
 	protected void computeDirectly(BiFunction<Integer, Integer, Boolean> f) {
-		final double c_0 = c0.getReal() + (0.5d + x0) * step;
-		final double ci_0 = c0.getImaginary() + (0.5d + y0) * step;
+		final double z0_r = z0.getReal() + (0.5d + x0) * step;
+		final double z0_i = z0.getImaginary() + (0.5d + y0) * step;
 		final double dIterations = (double) iterations;
-		double c1 = c_0;
+		double z_r = z0_r;
 		for (int x = x0; x < x0 + w; x++) {
-			double ci = ci_0;
+			double z_i = z0_i;
 			for (int y = y0; y < y0 + h; y++) {
 				if (f.apply(x, y)) {
-					double nsmooth = MandelbrotIteration.iterate(new Complex(c1, ci), iterations);
+					double nsmooth = JuliaIteration.iterate(new Complex(z_r, z_i), c, iterations);
 					if (!(nsmooth == dIterations)) {
 						inside = false;
 					}
 					lines.get(y)[x] = nsmooth;
 				}
-				ci += step;
+				z_i += step;
 			}
-			c1 += step;
+			z_r += step;
 		}
 	}
 

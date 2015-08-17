@@ -1,4 +1,4 @@
-package net.unstream.mandelbrot.alg;
+package net.unstream.fractal.alg.obsolete;
 
 import org.apache.commons.math3.complex.Complex;
 

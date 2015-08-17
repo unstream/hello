@@ -1,4 +1,4 @@
-package net.unstream.mandelbrot.alg;
+package net.unstream.fractal.alg.obsolete;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,16 +6,18 @@ import java.util.concurrent.ForkJoinPool;
 
 import javax.inject.Named;
 
-import net.unstream.fractal.api.domain.Fractal;
-
 import org.apache.commons.math3.complex.Complex;
 
-@Named("forkjoin")
-public class ForkJoin implements MandelbrotAlg {
+import net.unstream.fractal.alg.FractalAlg;
+import net.unstream.fractal.api.domain.Fractal;
+
+@Named("forkjoinMandelbrot")
+public class MandelbrotAlgForkJoin implements FractalAlg {
 	
 	/* (non-Javadoc)
 	 * @see net.unstream.fractal.MandelBrotAlg#compute(net.unstream.fractal.Fractal, int)
 	 */
+	@Override
 	public Map<Integer, double[]> compute(final Fractal fractal, final int width) {
 		Map<Integer, double[]> lines = new HashMap<Integer, double[]>();
 		Complex c0 = new Complex(fractal.getC0(), fractal.getC0i());
@@ -26,7 +28,7 @@ public class ForkJoin implements MandelbrotAlg {
 			lines.put(y, new double[width]);
 		}
 		int[] iterations = fractal.getColors().getIterations();
-		JuliaTask fb = new JuliaTask(c0, new Complex(fractal.getcJulia(), fractal.getCiJulia()) , step, 0, 0, width, height,
+		MandelbrotTask fb = new MandelbrotTask(c0, step, 0, 0, width, height,
 				iterations[iterations.length - 1], lines);
 		ForkJoinPool pool = new ForkJoinPool();
 		pool.invoke(fb);

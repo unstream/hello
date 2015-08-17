@@ -11,12 +11,12 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import net.unstream.fractal.alg.FractalAlg;
+import net.unstream.fractal.alg.obsolete.JuliaAlg;
 import net.unstream.fractal.api.MandelbrotService;
 import net.unstream.fractal.api.MandelbrotServiceException;
 import net.unstream.fractal.api.domain.Colors;
 import net.unstream.fractal.api.domain.Fractal;
-import net.unstream.mandelbrot.alg.JuliaAlg;
-import net.unstream.mandelbrot.alg.MandelbrotAlg;
 
 import org.apache.sanselan.ImageFormat;
 import org.apache.sanselan.ImageWriteException;
@@ -33,9 +33,7 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 	private final static Logger LOG = LoggerFactory.getLogger(MandelbrotServiceImpl.class);
 	
 	@Inject @Named("forkjoin")
-	private final MandelbrotAlg alg = null;
-	@Inject	@Named("forkjoinJulia")
-	private final MandelbrotAlg algJulia = null;
+	private final FractalAlg alg = null;
 	
 	public MandelbrotServiceImpl() {
 	}
@@ -93,11 +91,7 @@ public class MandelbrotServiceImpl implements MandelbrotService {
 		Color[] colorMap = generateColorMap(fractal.getColors()); 
 				
         Map<Integer, double[]> lines;
-        if (!fractal.isRenderJulia()) {
-            lines = alg.compute(fractal, width);
-        } else {
-            lines = algJulia.compute(fractal, width);
-        }
+        lines = alg.compute(fractal, width);
 		for (int y = 0; y < Math.min(height, lines.size()); y++) {
         	for (int x = 0; x < width; x++) {
         		double nsmooth = lines.get(y)[x];
