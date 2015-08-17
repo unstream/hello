@@ -309,9 +309,12 @@
 
 				$("#cJuliaFG").prop('hidden', false);
 				$("#ciJuliaFG").prop('hidden', false);
+				
+				$("#myModalLabel").text("Save this Julia Set");
 			} else {
 				$("#cJuliaFG").prop('hidden', true);
 				$("#ciJuliaFG").prop('hidden', true);
+				$("#myModalLabel").text("Save this Mandelbrot Set");
 			}
 			return true;
 		});
