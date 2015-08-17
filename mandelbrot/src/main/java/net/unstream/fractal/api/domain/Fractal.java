@@ -8,8 +8,6 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 @NodeEntity
 public class Fractal extends AbstractEntity {
-	
-	
 	@GraphId Long id;
 
 	private String name = "";

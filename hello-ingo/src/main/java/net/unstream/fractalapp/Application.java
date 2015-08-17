@@ -13,12 +13,17 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.auditing.IsNewAwareAuditingHandler;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.neo4j.config.EnableNeo4jRepositories;
@@ -38,7 +43,6 @@ public class Application {
 	
 	@Configuration
 	@EnableNeo4jRepositories(basePackages = "net.unstream.fractal")
-
 	static class ApplicationConfig extends Neo4jConfiguration {
 		
 		public ApplicationConfig() {
@@ -66,7 +70,6 @@ public class Application {
 			});
 			return listener;
 		}
-		
 	}
 
 	@Configuration
@@ -101,6 +104,23 @@ public class Application {
 			converters.add(new LongToJodaDateTimeConverter());
 	        return converters;
 	    }
+	}
+	
+	@Configuration
+	@EnableCaching
+	static class CacheConfiguration {
+		@Bean
+		public CacheManager cacheManager() {
+			return new EhCacheCacheManager(ehCacheCacheManager().getObject());
+		}
+
+		@Bean
+		public EhCacheManagerFactoryBean ehCacheCacheManager() {
+			EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
+			cmfb.setConfigLocation(new ClassPathResource("ehcache.xml"));
+			cmfb.setShared(true);
+			return cmfb;
+		}
 	}
 	
 	public static void main(String[] args) throws Exception {

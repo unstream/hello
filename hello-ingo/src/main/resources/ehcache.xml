@@ -1,0 +1,20 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd" 
+	updateCheck="true"
+	monitoring="autodetect" 
+	dynamicConfig="true"
+	maxBytesLocalHeap="100M">
+
+	<diskStore path="java.io.tmpdir" />
+	
+	<cache name="bigfractals"
+		maxEntriesLocalDisk="100" 
+		eternal="false" 
+		diskSpoolBufferSizeMB="100"
+		timeToIdleSeconds="3600" timeToLiveSeconds="360000"
+		memoryStoreEvictionPolicy="LFU" 
+		transactionalMode="off">
+		<persistence strategy="localTempSwap" />
+	</cache>
+
+</ehcache>

@@ -22,6 +22,7 @@ import org.apache.sanselan.ImageWriteException;
 import org.apache.sanselan.Sanselan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 

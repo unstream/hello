@@ -6,7 +6,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
 public class User extends AbstractEntity {
-    @GraphId 
+	@GraphId 
     private Long id;
     
 	@Indexed(unique=true)

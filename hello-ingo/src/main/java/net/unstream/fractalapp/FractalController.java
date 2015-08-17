@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -174,6 +176,7 @@ public class FractalController implements InitializingBean {
      */
     @RequestMapping(value = "/bigimage.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
+    @Cacheable(value="bigfractals", key="#id")
     public byte[] bigImage(long id) {
     	byte[] img = null;
     	Fractal fractal = null;
@@ -197,6 +200,7 @@ public class FractalController implements InitializingBean {
     }
 
     @RequestMapping("/mandelbrot/save")
+    @CacheEvict(value="bigfractals", key="#fractal.id")
     public String mandelbrotSave(
 		Fractal fractal, final String imgId, final String thumbId, 
 		HttpServletRequest request,
@@ -237,6 +241,7 @@ public class FractalController implements InitializingBean {
     		consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(value="bigfractals", key="#id")
     public void mandelbrotDelete(@PathVariable Long id, HttpServletRequest request, Principal principal) {
     	Fractal fractal = fractalService.findById(id);
     	if (fractal == null) { 
