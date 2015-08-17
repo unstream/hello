@@ -80,7 +80,7 @@ public class FractalController implements InitializingBean {
         if (mode == null) {
 			mode = (String) session.getAttribute("mode");
         }
-        Sort sort = new Sort(Sort.Direction.ASC, "createdDate");
+        Sort sort = new Sort(Sort.Direction.DESC, "lastModifiedDate");
         Pageable sortedPageRequest = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         Page<Fractal> page = fractalService.findAll(sortedPageRequest);
         model.addAttribute("fractalsPage", page);
