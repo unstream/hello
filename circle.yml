@@ -1,14 +1,19 @@
 machine:
- java:
-  version: oraclejdk8
- services:
-  - docker
+  java:
+    version: oraclejdk8
+  services:
+    - docker
 dependencies:
- override: 
-  - mvn install -DskipTests
+  override: 
+    - mvn install -DskipTests
 test:
- post:
-  - mkdir -p $CIRCLE_TEST_REPORTS/junit/
-  - find . -type f -regex ".*/target/.*-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
-  - pwd
-  - cp hello-ingo/target/*.war $CIRCLE_ARTIFACTS
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/target/.*-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - cp hello-ingo/target/*.war $CIRCLE_ARTIFACTS
+    - docker build -t unstream/mandelbrot docker
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
