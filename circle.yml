@@ -11,9 +11,10 @@ test:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/.*-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - cp hello-ingo/target/*.war $CIRCLE_ARTIFACTS
-    - docker build -t unstream/mandelbrot docker
+    - docker build -t unstream/mandelbrot .
 deployment:
   hub:
     branch: master
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push unstream/mandelbrot
