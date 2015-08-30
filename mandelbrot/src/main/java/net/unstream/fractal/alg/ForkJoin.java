@@ -15,7 +15,7 @@ import org.apache.commons.math3.complex.Complex;
 public class ForkJoin implements FractalAlg {
 	
 	/* (non-Javadoc)
-	 * @see net.unstream.fractal.MandelBrotAlg#compute(net.unstream.fractal.Fractal, int)
+	 * @see net.unstream.fractal.alg.FractalAlg#compute(net.unstream.fractal.Fractal, int)
 	 */
 	public Map<Integer, double[]> compute(final Fractal fractal, final int width) {
 		Function<Complex, Double> iterateFunction = null;
