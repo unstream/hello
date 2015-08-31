@@ -22,7 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -55,13 +54,13 @@ public class WebController implements InitializingBean {
     @RequestMapping("/login")
     public String login(Model model, final HttpServletRequest request) {
     	String referrer = request.getHeader("Referer");
-        if(referrer!=null){
+        if (referrer != null){
             request.getSession().setAttribute("url_prior_login", referrer);
         }
         return "login";
     }
 
-    @RequestMapping(value="/profile", method=RequestMethod.GET )
+    @RequestMapping(value="/profile", method=RequestMethod.GET)
     public String profile(final Model model, final Principal principal) throws UserNotFoundException {
 		User user = userService.findByUsername(principal.getName());
 		model.addAttribute("profileUser", user);
@@ -69,7 +68,7 @@ public class WebController implements InitializingBean {
         return "profile";
     }
 
-    @RequestMapping(value="/profileDelete", method=RequestMethod.POST )
+	@RequestMapping(value = "/profileDelete", method = RequestMethod.POST)
     public String profileDelete(Model model, final Principal principal, HttpServletRequest request) throws ServletException {
     	if (userDeletionCallback != null) {
     		userDeletionCallback.accept(principal.getName());
@@ -79,8 +78,7 @@ public class WebController implements InitializingBean {
     	return "redirect:mandelbrot";
     }
 
-	@RequestMapping(value="/profile", method=RequestMethod.POST )
-    @Transactional
+	@RequestMapping(value = "/profile", method = RequestMethod.POST)
     public String profileSave(final Model model, final User user, Principal principal,
     		String oldPassword, String newPassword) throws UserNotFoundException {
     	
@@ -109,8 +107,8 @@ public class WebController implements InitializingBean {
    		try {
 			userService.save(user);
 		} catch (Exception e) {
-			//Duplicate username??? TODO: Errorhandling
-			LOG.error("Cold not save profile", e);
+			LOG.error("Could not save profile: " + e.getMessage(), e);
+			model.addAttribute("signuperror", "Sign up failed, please choose a different username.");
 			return "login";
 		}
     	user.setPassword(password);

@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.unstream.fractal.api.FractalService;
-import net.unstream.fractal.api.FractalServiceException;
 import net.unstream.fractal.api.domain.Fractal;
 import net.unstream.fractal.api.domain.Image;
 
-import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -28,44 +26,24 @@ public class FractalServiceImpl implements FractalService {
 	 * @see net.unstream.fractal.db.FractalService#findAll()
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<Fractal> findAll() {
-		Transaction tx = graphDatabase.beginTx();
-		try {
-	    	List<Fractal> fractals = new ArrayList<Fractal>();
-				Iterable<Fractal> iterable = fractalRepository.findAll();
-				for (Fractal fractal : iterable) {
-					fractals.add(fractal);
-				}
-			return fractals;
-		} catch (Exception e) {
-			tx.failure();
-			throw new FractalServiceException(e);
-		} finally {
-			tx.success();
-			tx.close();
-		}
-		
+    	List<Fractal> fractals = new ArrayList<Fractal>();
+			Iterable<Fractal> iterable = fractalRepository.findAll();
+			for (Fractal fractal : iterable) {
+				fractals.add(fractal);
+			}
+		return fractals;
 	}
 	
 	/* (non-Javadoc)
 	 * @see net.unstream.fractal.db.FractalService#findAll()
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public Page<Fractal> findAll(Pageable pageable) {
-		Transaction tx = graphDatabase.beginTx();
-		try {
-			Page<Fractal> page = fractalRepository.findAll(pageable);
-			return page;
-		} catch (Exception e) {
-			tx.failure();
-			throw new FractalServiceException(e);
-		} finally {
-			tx.success();
-			tx.close();
-		}
-		
+		Page<Fractal> page = fractalRepository.findAll(pageable);
+		return page;
 	}
 
 	/* (non-Javadoc)
@@ -74,16 +52,7 @@ public class FractalServiceImpl implements FractalService {
 	@Override
 	@Transactional
 	public Fractal save(Fractal fractal) {
-		Transaction tx = graphDatabase.beginTx();
-    	try {
-    		return fractalRepository.save(fractal);
-    	} catch (Exception e) {
-    		tx.failure();
-    		throw new FractalServiceException(e);
-		} finally {
-    		tx.success();
-			tx.close();
-		}
+		return fractalRepository.save(fractal);
 	}
 
 	/* (non-Javadoc)
@@ -92,16 +61,7 @@ public class FractalServiceImpl implements FractalService {
     @Override
 	@Transactional(readOnly=true)
 	public Fractal findById(long id) {
-	  	Transaction tx = graphDatabase.beginTx();
-    	try {
-			return fractalRepository.findById(id);
-		} catch (Exception e) {
-			tx.failure();
-			throw new FractalServiceException(e);
-		} finally {
-			tx.success();
-			tx.close();
-		}
+		return fractalRepository.findById(id);
 	}
 	
 	/* (non-Javadoc)
@@ -110,33 +70,16 @@ public class FractalServiceImpl implements FractalService {
     @Override
 	@Transactional(readOnly=true)
 	public Image findImageById(long id) {
-	  	Transaction tx = graphDatabase.beginTx();
-    	try {
-			return imageRepository.findById(id);
-		} catch (Exception e) {
-			tx.failure();
-			throw new FractalServiceException(e);
-		} finally {
-			tx.success();
-			tx.close();
-		}
+		return imageRepository.findById(id);
 	}
+
     /* (non-Javadoc)
 	 * @see net.unstream.fractal.db.FractalService#delete(java.lang.Long)
 	 */
     @Override
 	@Transactional
 	public void delete(Long id) {
-    	Transaction tx = graphDatabase.beginTx();
-    	try {
-        	fractalRepository.delete(id);
-    	} catch (Exception e) {
-    		tx.failure();
-    		throw new FractalServiceException(e);
-    	} finally {
-    		tx.success();
-    		tx.close();
-    	} 
+       	fractalRepository.delete(id);
 	}
 
 }

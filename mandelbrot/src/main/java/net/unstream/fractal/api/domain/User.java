@@ -9,8 +9,8 @@ public class User extends AbstractEntity {
 	@GraphId 
     private Long id;
     
-	@Indexed(unique=true)
-	private String username;
+	@Indexed(unique=true, failOnDuplicate = true)
+	public String username;
 	private String password;
 	private String email;
 	boolean admin = false;

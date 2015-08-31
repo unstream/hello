@@ -20,6 +20,7 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
@@ -30,23 +31,26 @@ import org.springframework.data.neo4j.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.lifecycle.AuditingEventListener;
 import org.springframework.data.neo4j.support.mapping.Neo4jMappingContext;
+import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.config.SpringDataWebConfiguration;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @ComponentScan({"net.unstream.fractalapp", "net.unstream"})
+@Import(RepositoryRestMvcConfiguration.class)
 @EnableAutoConfiguration
 @EnableAsync
 public class Application {
 
-	
 	@Configuration
-	@EnableNeo4jRepositories(basePackages = "net.unstream.fractal")
+	@EnableNeo4jRepositories(basePackages = "net.unstream")
+	@EnableTransactionManagement
+
 	static class ApplicationConfig extends Neo4jConfiguration {
-		
 		public ApplicationConfig() {
-			setBasePackage("net.unstream.fractal");
+			setBasePackage("net.unstream");
 		}
 		
 		@Bean
@@ -59,6 +63,7 @@ public class Application {
 			
 			return database;
 		}
+		
 
 		@Bean
 		public AuditingEventListener auditingEventListener() throws Exception {
