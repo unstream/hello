@@ -13,7 +13,7 @@ mvn install builds all subprojects and creates a hello-ingo-1.0-SNAPSHOT.war in 
 
 ### Run the project
 Either execute the war directly calling java -Dneo4jData=&lt;db-folder&gt; -jar hello-ingo-1.0-SNAPSHOT.war
-or deploy the war to a Servlet Container, I tested with Wildfly and Tomcat.
+or deploy the war to a Servlet Container, I tested with Wildfly and Tomcat. You need to specify where the embedded neo4j database stores its data. Use a external neo4j instance by changing /hello/hello-ingo/src/main/java/net/unstream/fractalapp/Application.java.
 
 ### Modules
 #### hello-ingo
@@ -22,6 +22,6 @@ The module hello-ingo contains a Spring Boot Application serving a Spring MVC/Th
 The module mandelbrot implements the persistence services for users and fractals using Spring Data and neo4j. 
 It also implements the Mandelbrot image creation services.
 #### admin
-This module implements an admin server to monitor the fractal app. To do so, you need to enable the management in /hello/hello-ingo/src/main/resources/application.properties
+This module implements an spring-boot-admin-server to monitor the fractal app. To do so you need to enable the management in /hello/hello-ingo/src/main/resources/application.properties.
 
 
