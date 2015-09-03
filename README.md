@@ -16,9 +16,12 @@ Either execute the war directly calling java -Dneo4jData=&lt;db-folder&gt; -jar 
 or deploy the war to a Servlet Container, I tested with Wildfly and Tomcat.
 
 ### Modules
+#### hello-ingo
 The module hello-ingo contains a Spring Boot Application serving a Spring MVC/Thymeleaf web application.
-
+#### mandelbrot
 The module mandelbrot implements the persistence services for users and fractals using Spring Data and neo4j. 
 It also implements the Mandelbrot image creation services.
+#### admin
+This module implements an admin server to monitor the fractal app. To do so, you need to enable the management in /hello/hello-ingo/src/main/resources/application.properties
 
 
