@@ -22,6 +22,8 @@ public class Fractal extends AbstractEntity {
 	private boolean renderJulia = false;
 	private double cJulia = 0d;
 	private double ciJulia = 0d;
+	
+	private String polynomial ="";
 
 	@RelatedTo(type="Parent", direction=Direction.OUTGOING)
     private @Fetch Fractal parent;
@@ -90,6 +92,13 @@ public class Fractal extends AbstractEntity {
 	}
 	public void setCiJulia(double ciJulia) {
 		this.ciJulia = ciJulia;
+	}
+
+	public String getPolynomial() {
+		return polynomial;
+	}
+	public void setPolynomial(String polynomial) {
+		this.polynomial = polynomial;
 	}
 	
 	public Long getId() {

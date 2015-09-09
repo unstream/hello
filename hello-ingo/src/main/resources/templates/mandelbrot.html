@@ -214,21 +214,30 @@
 											th:field="*{renderJulia}" value="1"  />
 								</div>
 							</div>
+							
 							<div class="form-group" id="cJuliaFG" th:hidden="*{!renderJulia}" th:classappend="${#fields.hasErrors('cJulia')}? has-error">
-								<label for="x2" class="col-md-6 control-label">&#x0211C;(c)</label>
+								<label for="cJulia" class="col-md-6 control-label">&#x0211C;(c)</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="cJulia" name="cJulia"
 										th:field="*{cJulia}" value="0"  />
 								</div>
 							</div>
 							<div class="form-group" id="ciJuliaFG" th:hidden="*{!renderJulia}" th:classappend="${#fields.hasErrors('ciJulia')}? has-error">
-								<label for="y2" class="col-md-6 control-label">&#x02111;(c)</label>
+								<label for="ciJulia" class="col-md-6 control-label">&#x02111;(c)</label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" id="ciJulia" name="ciJulia"
 										th:field="*{ciJulia}" value="0"  />
 								</div>
 							</div>
 
+							<div class="form-group" id="polynomialFG" th:hidden="*{!renderJulia}" th:classappend="${#fields.hasErrors('polynomial')}? has-error">
+								<label for="polynomial" class="col-md-6 control-label">P(c)</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control" id="polynomial" name="polynomial"
+										th:field="*{polynomial}" value="" />
+									<label th:if="${#fields.hasErrors('polynomial')}" th:errors="*{polynomial}" class="control-label" for="polynomial">Invalid polynomial</label>
+								</div>
+							</div>
 
 							<div class="btn-toolbar">
 								<button type="submit" formmethod="get" class="btn btn-primary col-md-3 pull-right" formaction="../mandelbrot" th:formaction="@{/mandelbrot}" >Submit</button>
@@ -309,11 +318,13 @@
 
 				$("#cJuliaFG").prop('hidden', false);
 				$("#ciJuliaFG").prop('hidden', false);
+				$("#polynomialFG").prop('hidden', false);
 				
 				$("#myModalLabel").text("Save this Julia Set");
 			} else {
 				$("#cJuliaFG").prop('hidden', true);
 				$("#ciJuliaFG").prop('hidden', true);
+				$("#polynomialFG").prop('hidden', true);
 				$("#myModalLabel").text("Save this Mandelbrot Set");
 			}
 			return true;

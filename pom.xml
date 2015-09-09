@@ -11,6 +11,7 @@
 	<modules>
 		<module>hello-ingo</module>
 		<module>mandelbrot</module>
+		<module>polynomial</module>
 	</modules>
 
 	<parent>

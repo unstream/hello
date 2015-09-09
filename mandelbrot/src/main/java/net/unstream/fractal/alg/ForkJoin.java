@@ -8,6 +8,7 @@ import java.util.function.Function;
 import javax.inject.Named;
 
 import net.unstream.fractal.api.domain.Fractal;
+import net.unstream.polynomial.PolynomialFunction;
 
 import org.apache.commons.math3.complex.Complex;
 
@@ -22,8 +23,12 @@ public class ForkJoin implements FractalAlg {
 		
 		int[] iterations = fractal.getColors().getIterations();
 		int maxIterations = iterations[iterations.length - 1];
-		if (fractal.isRenderJulia()) {			
-			iterateFunction = new JuliaFunction(maxIterations, new Complex(fractal.getcJulia(), fractal.getCiJulia()));
+		if (fractal.isRenderJulia()) {
+			if (fractal.getPolynomial() == "") {
+				iterateFunction = new JuliaFunction(maxIterations, new Complex(fractal.getcJulia(), fractal.getCiJulia()));
+			} else {
+				iterateFunction = new PolynomialFunction(maxIterations, fractal.getPolynomial());
+			}
 		} else {
 			iterateFunction = new MandelbrotFunction(maxIterations);
 		}
