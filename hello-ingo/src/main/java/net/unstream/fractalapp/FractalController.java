@@ -9,7 +9,9 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
+import net.unstream.fractal.FractalValidator;
 import net.unstream.fractal.api.FractalService;
 import net.unstream.fractal.api.MandelbrotService;
 import net.unstream.fractal.api.MandelbrotServiceException;
@@ -49,6 +51,9 @@ public class FractalController implements InitializingBean {
 	
 	@Inject
 	MandelbrotService mService;
+	
+	@Autowired
+	FractalValidator fractalValidator;
 	
 	@Autowired private FractalService fractalService;
 	@Autowired private UserService userService;
@@ -99,11 +104,14 @@ public class FractalController implements InitializingBean {
     
 	@RequestMapping(value={"/", "/mandelbrot"})
     public String mandelbrot(
-    		Fractal fractal, final BindingResult bindingResult, final boolean reset,  
+    		@Valid Fractal fractal, String imgId, final BindingResult bindingResult, final boolean reset,  
     		HttpServletRequest request,
     		Model model) {
 
+		fractalValidator.validate(fractal, bindingResult);
 		if (bindingResult.hasErrors()) {
+			LOG.warn(bindingResult.getAllErrors().toString());
+			model.addAttribute("imgId", imgId); //keep the old image
 			return "mandelbrot";
 		}
 
@@ -123,7 +131,7 @@ public class FractalController implements InitializingBean {
 		fractal.setId(null);
 		session.setAttribute("fractal", fractal);
 		final String thumbId = UUID.randomUUID().toString();
-		final String imgId = UUID.randomUUID().toString();
+		imgId = UUID.randomUUID().toString();
 		session.setAttribute(thumbId, mService.computeMandelBrotPng(fractal, 64, 64));
 		session.setAttribute(imgId, mService.computeMandelBrotPng(fractal, 500, 500));
 		model.addAttribute("fractal", fractal);
