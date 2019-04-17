@@ -5,11 +5,18 @@ This project was not written because the Mandelbrot Set is cool (although it is!
 
 You can download a docker image of this project at https://hub.docker.com/r/unstream/mandelbrot/.
 
-A running instance where you can browse some fractals is deployed at http://hello-ingo.elasticbeanstalk.com/. 
-But beware, it is a T1 Micro instance using an embedded database, which is not much faster than my Raspberry PI.
-
 ### Building the project
 mvn install builds all subprojects and creates a hello-ingo-1.0-SNAPSHOT.war in the hello-ingo module.
+
+### Docker
+Copy db from running application:
+```
+docker cp -a 3a0c69ebc057:/data/neo4j.db .
+```
+Start application using a local folder for the database:
+```
+docker run -v ~/develop/mandelbrot/neo4j.db:/data/neo4j.db -it -p8055:8080 unstream/mandelbrot
+```
 
 ### Run the project
 Either execute the war directly calling java -Dneo4jData=&lt;db-folder&gt; -jar hello-ingo-1.0-SNAPSHOT.war
