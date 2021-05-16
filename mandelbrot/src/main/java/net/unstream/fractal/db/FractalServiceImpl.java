@@ -2,26 +2,30 @@ package net.unstream.fractal.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import net.unstream.fractal.api.FractalService;
 import net.unstream.fractal.api.domain.Fractal;
 import net.unstream.fractal.api.domain.Image;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.neo4j.core.GraphDatabase;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 public class FractalServiceImpl implements FractalService {
 
-	@Lazy @Autowired private GraphDatabase graphDatabase;
-	@Autowired private FractalRepository fractalRepository;
-	@Autowired private  ImageRepository imageRepository;
-	
+	private final FractalRepository fractalRepository;
+	private final ImageRepository imageRepository;
+
+	@Autowired
+	public FractalServiceImpl(FractalRepository fractalRepository, ImageRepository imageRepository) {
+		this.fractalRepository = fractalRepository;
+		this.imageRepository = imageRepository;
+	}
+
 	/* (non-Javadoc)
 	 * @see net.unstream.fractal.db.FractalService#findAll()
 	 */
@@ -60,8 +64,8 @@ public class FractalServiceImpl implements FractalService {
 	 */
     @Override
 	@Transactional(readOnly=true)
-	public Fractal findById(long id) {
-		return fractalRepository.findById(id);
+	public Fractal findById(String id) {
+		return fractalRepository.findById(id).get();
 	}
 	
 	/* (non-Javadoc)
@@ -69,8 +73,8 @@ public class FractalServiceImpl implements FractalService {
 	 */
     @Override
 	@Transactional(readOnly=true)
-	public Image findImageById(long id) {
-		return imageRepository.findById(id);
+	public Image findImageById(String id) {
+		return imageRepository.findById(id).get();
 	}
 
     /* (non-Javadoc)
@@ -78,8 +82,8 @@ public class FractalServiceImpl implements FractalService {
 	 */
     @Override
 	@Transactional
-	public void delete(Long id) {
-       	fractalRepository.delete(id);
+	public void delete(String id) {
+       	fractalRepository.deleteById(id);
 	}
 
 }

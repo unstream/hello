@@ -3,8 +3,6 @@ package net.unstream.fractalapp.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Named;
-
 import net.unstream.fractal.api.UserNotFoundException;
 import net.unstream.fractal.api.UserService;
 import net.unstream.fractal.api.domain.User;
@@ -18,8 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-@Component
-@Named("userDetailsService")
+@Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
 	@Lazy @Autowired UserService userService;

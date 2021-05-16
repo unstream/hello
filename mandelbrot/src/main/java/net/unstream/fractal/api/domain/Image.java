@@ -1,25 +1,23 @@
 package net.unstream.fractal.api.domain;
 
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.annotation.Id;
 
-@NodeEntity
 public class Image {
-	public enum ImageType {
+	public enum 		ImageType {
 		PNG
 	}
-    @GraphId 
-    private Long id;
+	@Id
+    private String id;
 	
 	private int width = 500;
 	private int height = 500;
 	private ImageType type = ImageType.PNG;
 	private byte [] image = null;
 	
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

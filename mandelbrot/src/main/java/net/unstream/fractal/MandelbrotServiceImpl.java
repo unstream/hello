@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import net.unstream.fractal.alg.FractalAlg;
 import net.unstream.fractal.api.MandelbrotService;
 import net.unstream.fractal.api.MandelbrotServiceException;
@@ -22,20 +19,22 @@ import org.apache.sanselan.ImageWriteException;
 import org.apache.sanselan.Sanselan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Component;
 
-@Named
+@Component
 public class MandelbrotServiceImpl implements MandelbrotService {
 	
 	private static final int COLOR_MAP_SIZE = 10000;
 	private final static Logger LOG = LoggerFactory.getLogger(MandelbrotServiceImpl.class);
 	
-	@Inject @Named("forkjoin")
-	private final FractalAlg alg = null;
+	private FractalAlg alg = null;
 	
-	public MandelbrotServiceImpl() {
+	public MandelbrotServiceImpl(FractalAlg alg) {
+		this.alg = alg;
 	}
 	
 	/* (non-Javadoc)

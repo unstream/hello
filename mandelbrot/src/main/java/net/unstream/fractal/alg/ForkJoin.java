@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 
-import javax.inject.Named;
 
 import net.unstream.fractal.api.domain.Fractal;
 import net.unstream.polynomial.PolynomialFunction;
 
 import org.apache.commons.math3.complex.Complex;
+import org.springframework.stereotype.Component;
 
-@Named("forkjoin")
+@Component("forkjoin")
 public class ForkJoin implements FractalAlg {
 	
 	/* (non-Javadoc)

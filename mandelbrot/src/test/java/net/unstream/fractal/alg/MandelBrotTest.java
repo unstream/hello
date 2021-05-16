@@ -1,26 +1,19 @@
 package net.unstream.fractal.alg;
 
-import static org.junit.Assert.assertTrue;
+import net.unstream.fractal.api.domain.Colors;
+import net.unstream.fractal.api.domain.Fractal;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import static org.junit.Assert.assertTrue;
 
-import net.unstream.fractal.alg.obsolete.MandelbrotAlgStream;
-import net.unstream.fractal.api.domain.Colors;
-import net.unstream.fractal.api.domain.Fractal;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AlgorithmsTestContext.class})
 public class MandelBrotTest {
 	
-	@Inject @Named(value="forkjoin")
+	@Autowired//("forkjoin")
 	FractalAlg alg;
 
 	@Test
@@ -51,7 +44,7 @@ public class MandelBrotTest {
 	public void testBenchmark() {
 		int[] iterations = {10, 100};
 		int[] sizes = {100, 200, 400};
-		FractalAlg[] algorithms = {new MandelbrotAlgStream(), alg};
+		FractalAlg[] algorithms = {alg};
 		for (int threshold = 20; threshold <= 80; threshold += 20) {
 			FractalTask.setThreshold(threshold);
 			for (FractalAlg alg: algorithms) {

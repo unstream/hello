@@ -17,20 +17,48 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.2.5.RELEASE</version>
+		<version>2.4.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 	<repositories>
+
+		<repository>
+			<id>spring-plugins-releases</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/plugins-release</url>
+		</repository>
+
 		<repository>
 			<id>spring-releases</id>
 			<name>Spring Releases</name>
 			<url>https://repo.spring.io/libs-release</url>
 		</repository>
 		<repository>
+			<id>xebialabs-releases</id>
+			<url>https://plugins.xebialabs.com/nexus/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
+<!--
+		<repository>
 			<id>neo4j</id>
 			<name>Neo4j</name>
 			<url>http://m2.neo4j.org/</url>
 		</repository>
+-->
 	</repositories>
 
 </project>

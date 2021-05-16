@@ -1,18 +1,17 @@
 package net.unstream.fractal.db;
 
-import java.util.List;
-
 import net.unstream.fractal.api.domain.Fractal;
 
-import org.springframework.data.neo4j.annotation.Query;
-import org.springframework.data.neo4j.repository.GraphRepository;
+import net.unstream.fractal.api.domain.Image;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Optional;
 
-public interface FractalRepository extends GraphRepository<Fractal> {
+public interface FractalRepository extends MongoRepository<Fractal, String> {
 
-	Fractal findById(long id);
+	//Optional<Fractal> findById(String id);
 	
-	  @Query("MATCH (f:Fractal) RETURN f SKIP {0} LIMIT {1}")
-	  public List<Fractal> findAll(long skip, long limit);
+	  //@Query("MATCH (f:Fractal) RETURN f SKIP {0} LIMIT {1}")
+	  //public List<Fractal> findAll(long skip, long limit);
 
 }

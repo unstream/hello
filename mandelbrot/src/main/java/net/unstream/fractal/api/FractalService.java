@@ -34,7 +34,7 @@ public interface FractalService {
 	 *
 	 * @param id the of the fractal to delete
 	 */
-	public abstract void delete(Long id);
+	public abstract void delete(String id);
 
 	/**
 	 * Find fractal by id.
@@ -42,7 +42,7 @@ public interface FractalService {
 	 * @param id the id
 	 * @return the fractal
 	 */
-	public abstract Fractal findById(long id);
+	public abstract Fractal findById(String id);
 
 	/**
 	 * Find image by id.
@@ -50,7 +50,7 @@ public interface FractalService {
 	 * @param id the id
 	 * @return the image entity
 	 */
-	public abstract Image findImageById(long id);
+	public abstract Image findImageById(String id);
 
 	Page<Fractal> findAll(Pageable pageable);
 

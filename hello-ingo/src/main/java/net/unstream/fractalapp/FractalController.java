@@ -6,7 +6,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -26,7 +25,6 @@ import net.unstream.fractalapp.security.CustomAuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -49,20 +47,29 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Controller
 public class FractalController implements InitializingBean {
 	
-	@Inject
+	final
 	MandelbrotService mService;
 	
-	@Autowired
+	final
 	FractalValidator fractalValidator;
 	
-	@Autowired private FractalService fractalService;
-	@Autowired private UserService userService;
-	@Autowired private WebController webController;
+	private final FractalService fractalService;
+	private final UserService userService;
+	private final WebController webController;
 
-	@Autowired private CustomAuthenticationProvider customAuthenticationProvider;
+	private final CustomAuthenticationProvider customAuthenticationProvider;
 	
 	
 	private final static Logger LOG = LoggerFactory.getLogger(FractalController.class);
+
+	public FractalController(MandelbrotService mService, FractalValidator fractalValidator, FractalService fractalService, UserService userService, WebController webController, CustomAuthenticationProvider customAuthenticationProvider) {
+		this.mService = mService;
+		this.fractalValidator = fractalValidator;
+		this.fractalService = fractalService;
+		this.userService = userService;
+		this.webController = webController;
+		this.customAuthenticationProvider = customAuthenticationProvider;
+	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -87,8 +94,8 @@ public class FractalController implements InitializingBean {
         if (mode == null) {
 			mode = (String) session.getAttribute("mode");
         }
-        Sort sort = new Sort(Sort.Direction.DESC, "lastModifiedDate");
-        Pageable sortedPageRequest = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        Sort sort = Sort.by(Sort.Direction.DESC, "lastModifiedDate");
+        Pageable sortedPageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         Page<Fractal> page = fractalService.findAll(sortedPageRequest);
         model.addAttribute("fractalsPage", page);
         model.addAttribute("fractals", page.getContent());
@@ -104,9 +111,9 @@ public class FractalController implements InitializingBean {
     
 	@RequestMapping(value={"/", "/mandelbrot"})
     public String mandelbrot(
-    		@Valid Fractal fractal, String imgId, final BindingResult bindingResult, final boolean reset,  
-    		HttpServletRequest request,
-    		Model model) {
+			@Valid Fractal fractal, String imgId, final BindingResult bindingResult, final boolean reset,
+			HttpServletRequest request,
+			Model model) {
 
 		fractalValidator.validate(fractal, bindingResult);
 		if (bindingResult.hasErrors()) {
@@ -154,8 +161,7 @@ public class FractalController implements InitializingBean {
     	} else {
     		//try to load it from the DB
     		try {
-				long id = Long.parseLong(imgId);
-				img = fractalService.findImageById(id).getImage();
+				img = fractalService.findById(imgId).getImage().getImage();
     		} catch (NumberFormatException e) {
 				throw new MandelbrotServiceException(e);
 			}
@@ -163,17 +169,33 @@ public class FractalController implements InitializingBean {
     	return img;
     }
 
+	/**
+	 * Retrieve an image thumpnail from the database.
+	 * @param id fractal id
+	 * @return PNG image
+	 */
+	@RequestMapping(value = "/thumpnail", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+	@ResponseBody
+	@Transactional(readOnly=true)
+	public byte[] thumpnail(String id) {
+		byte[] img = null;
+		img = fractalService.findById(id).getThumbnail().getImage();
+		//img = fractalService.findImageById(id).getImage();
+		return img;
+	}
+
     /**
      * Retrieve an image from the database.
-     * @param id image id
+     * @param id fractal id
      * @return PNG image
      */
     @RequestMapping(value = "/image", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     @Transactional(readOnly=true)
-    public byte[] image(long id) {
+    public byte[] image(String id) {
     	byte[] img = null;
-		img = fractalService.findImageById(id).getImage();
+    	img = fractalService.findById(id).getImage().getImage();
+		//img = fractalService.findImageById(id).getImage();
     	return img;
     }
 
@@ -185,7 +207,7 @@ public class FractalController implements InitializingBean {
     @RequestMapping(value = "/bigimage.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
     @Cacheable(value="bigfractals", key="#id")
-    public byte[] bigImage(long id) {
+    public byte[] bigImage(String id) {
     	byte[] img = null;
     	Fractal fractal = null;
 		fractal = fractalService.findById(id);
@@ -199,11 +221,11 @@ public class FractalController implements InitializingBean {
     }
     
     @RequestMapping("/mandelbrot/{id}")
-	public String mandelbrotRead(@PathVariable Long id, Model model) {
+	public String mandelbrotRead(@PathVariable String id, Model model) {
     	Fractal fractal = null;
    		fractal = fractalService.findById(id);
 		model.addAttribute("fractal", fractal);
-		model.addAttribute("imgId", fractal.getImage().getId());
+		model.addAttribute("imgId", fractal.getId());
 		return "mandelbrot";
     }
 
@@ -214,7 +236,7 @@ public class FractalController implements InitializingBean {
 		HttpServletRequest request,
 		Model model, Principal principal) throws ExecutionException, InterruptedException, UserNotFoundException {
     	HttpSession session = request.getSession();
-    	if (fractal.getId() == null) {
+    	if ((fractal.getId() == null) || ("".equals(fractal.getId()))) {
     		//Create a new Image
         	Image thumb = new Image();
     		thumb.setHeight(64);
@@ -250,7 +272,7 @@ public class FractalController implements InitializingBean {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @Transactional
     @CacheEvict(value="bigfractals", key="#id")
-    public void mandelbrotDelete(@PathVariable Long id, HttpServletRequest request, Principal principal) {
+    public void mandelbrotDelete(@PathVariable String id, HttpServletRequest request, Principal principal) {
     	Fractal fractal = fractalService.findById(id);
     	if (fractal == null) { 
     		throw new RuntimeException("Internal error");

@@ -78,7 +78,7 @@
 						<a th:href="@{'/mandelbrot/' + ${fractal.id}}" href="#read">
 							<img class="img-responsive center-block"
 								th:if="${fractal.image != null}" id="fractal" th:id="fractal + ${fractal.id}"
-								th:attr="src=@{/image(id=${fractal.image.id})}" src="../static/assets/images/mandelbrot.png"/> 
+								th:attr="src=@{/image(id=${fractal.id})}" src="../static/assets/images/mandelbrot.png"/>
 						</a>
 						<a class="zoombox" th:attr="href=@{/bigimage.png(id=${fractal.id})}" href="../static/assets/images/mandelbrot.png" data-toggle="lightbox" >
 							<span class="glyphicon glyphicon-fullscreen zoom-btn"></span>

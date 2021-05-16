@@ -1,24 +1,20 @@
 package net.unstream.fractal.api.domain;
 
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.annotation.Id;
 
-@NodeEntity
-public class User extends AbstractEntity {
-	@GraphId 
-    private Long id;
-    
-	@Indexed(unique=true, failOnDuplicate = true)
+public class User {
+	@Id
+    private String id;
+
 	public String username;
 	private String password;
 	private String email;
 	boolean admin = false;
 	
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getUsername() {

@@ -1,8 +1,5 @@
 package net.unstream.fractalapp.security;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,13 +18,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebMvcSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Inject
-	@Named("customAuthenticationProvider")
-    private AuthenticationProvider authenticationProvider;
+	private final AuthenticationProvider authenticationProvider;
 	
-	@Inject
-	@Named("userDetailsService")
-    private UserDetailsService userDetailsService;
+	private final UserDetailsService userDetailsService;
+
+	public WebSecurityConfig(AuthenticationProvider authenticationProvider, UserDetailsService userDetailsService) {
+		this.authenticationProvider = authenticationProvider;
+		this.userDetailsService = userDetailsService;
+	}
 
 	@Override
     protected void configure(HttpSecurity http) throws Exception {

@@ -1,7 +1,5 @@
 package net.unstream.fractalapp.security;
-import javax.inject.Named;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,14 +11,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component
-@Named("customAuthenticationProvider")
+@Component("customAuthenticationProvider")
 public class CustomAuthenticationProvider implements AuthenticationProvider {
  
-	@Lazy @Autowired UserDetailsService userDetailsService;
+	@Lazy
 
-	
-	@Override
+    final UserDetailsService userDetailsService;
+
+    public CustomAuthenticationProvider(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+
+    @Override
     public Authentication authenticate(Authentication authentication) 
       throws AuthenticationException {
         String name = authentication.getName();

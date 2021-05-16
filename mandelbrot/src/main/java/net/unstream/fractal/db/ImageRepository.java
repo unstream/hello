@@ -4,8 +4,10 @@ import net.unstream.fractal.api.domain.Image;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface ImageRepository extends CrudRepository<Image, Long> {
+import java.util.Optional;
 
-	Image findById(long id);
+public interface ImageRepository extends CrudRepository<Image, String> {
+
+	Optional<Image> findById(String id);
 
 }

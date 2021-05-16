@@ -1,15 +1,10 @@
 package net.unstream.fractal.api.domain;
 
-import org.neo4j.graphdb.Direction;
-import org.springframework.data.neo4j.annotation.Fetch;
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
+import org.springframework.data.annotation.Id;
 
-@NodeEntity
-public class Fractal extends AbstractEntity {
-	@GraphId Long id;
+public class Fractal {
+	@Id
+	String id;
 	
 	private String name = "";
 	private String description = "";
@@ -25,20 +20,14 @@ public class Fractal extends AbstractEntity {
 	
 	private String polynomial ="";
 
-	@RelatedTo(type="Parent", direction=Direction.OUTGOING)
-    private @Fetch Fractal parent;
+    private Fractal parent;
+    private Image thumbnail;
 
-    @RelatedTo(type="THUMB", direction=Direction.OUTGOING)
-    private @Fetch Image thumbnail;
-
-    @RelatedTo(type="IMAGE", direction=Direction.OUTGOING)
     private Image image;
 
-    @RelatedTo(type="CREATOR", direction=Direction.OUTGOING)
-    private @Fetch User creator;
+    private User creator;
 
-	@RelatedTo(type="COLORMAPPING", direction=Direction.OUTGOING)
-    private @Fetch Colors colors;
+    private Colors colors;
 
 	public Fractal() {
     	colors = new Colors();
@@ -101,10 +90,10 @@ public class Fractal extends AbstractEntity {
 		this.polynomial = polynomial;
 	}
 	
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getName() {

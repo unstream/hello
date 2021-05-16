@@ -1,13 +1,14 @@
 package net.unstream.fractal.api.domain;
 
+import org.springframework.data.annotation.Id;
+
 import java.util.Arrays;
 
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.NodeEntity;
 
-@NodeEntity
+
 public class Colors {
-	@GraphId Long id;
+	@Id
+	String id;
 
 	private String [] colors = {"#000000", "#0080ff", "#30b0ff", "#ffffff"} ;
 
@@ -39,11 +40,11 @@ public class Colors {
 		this.iterations = iterations;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

@@ -94,14 +94,14 @@
 						<td style="vertical-align: middle" >
 							<a th:href="@{'/mandelbrot/' + ${fractal.id}}" href="#read" >
 								<img th:if="${fractal.thumbnail != null}" id="fractal" th:id="fractal + ${fractal.id}"  height="64" width="64" src="../static/mandelbrot.png"
-					th:attr="src=@{/image(id=${fractal.thumbnail.id})}" />
+					th:attr="src=@{/thumpnail(id=${fractal.id})}" />
 							</a>
 						</td>
 						<td style="vertical-align: middle" th:text="${fractal.name}">Complete Mandelbrot</td>
 						<td style="vertical-align: middle" th:text="${fractal.creator.username}">The complete Mandelbrot Set in blue.</td> <!-- add date:  + ' (' + ${#dates.format(fractal.lastModifiedDate, 'dd/MMM/yyyy HH:mm')} + ')' -->
 						<td style="vertical-align: middle" ><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star"></span></td>
 						<td th:if="${user}!='anonymous'" style="vertical-align: middle" class="taskOptions text-center">
-							<a th:href="@{'/mandelbrot/' + ${fractal.id} + '.json'}" href="#deleteProject" rel="tooltip" data-toggle="modal" class="tip-top"
+							<a th:href="@{'/mandelbrot/' + ${fractal.id}}" href="#deleteProject" rel="tooltip" data-toggle="modal" class="tip-top"
             data-original-title="Delete"><i class="glyphicon glyphicon-trash"></i></a>
 
        					 </td>
