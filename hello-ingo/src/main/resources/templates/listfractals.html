@@ -94,7 +94,7 @@
 						<td style="vertical-align: middle" >
 							<a th:href="@{'/mandelbrot/' + ${fractal.id}}" href="#read" >
 								<img th:if="${fractal.thumbnail != null}" id="fractal" th:id="fractal + ${fractal.id}"  height="64" width="64" src="../static/mandelbrot.png"
-					th:attr="src=@{/thumpnail(id=${fractal.id})}" />
+					th:attr="src=@{/thumbnail(id=${fractal.id})}" />
 							</a>
 						</td>
 						<td style="vertical-align: middle" th:text="${fractal.name}">Complete Mandelbrot</td>

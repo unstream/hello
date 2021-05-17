@@ -1,0 +1,13 @@
+version: "3"
+services:
+  fractal-database:
+    image: mongo:4.4.6
+    container_name: "mongo-database"
+    ports:
+      - 27017:27017
+  fractal-app:
+    image: hello-mandelbrot
+    ports:
+      - 9091:8080
+    links:
+      - fractal-database

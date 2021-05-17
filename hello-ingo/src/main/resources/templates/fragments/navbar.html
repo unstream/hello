@@ -12,13 +12,13 @@
 		</div>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
-				<li th:class="${'__${execInfo.templateName}__'.startsWith('listfractals')}? 'active'">
+				<li th:class="${'__${#execInfo.templateName}__'.startsWith('listfractals')}? 'active'">
 					<a href="../listFractals.html" th:href="@{/listfractals}">Browse</a>
 				</li>
-				<li th:class="${execInfo.templateName} == 'mandelbrot'? 'active'">
+				<li th:class="${#execInfo.templateName} == 'mandelbrot'? 'active'">
 					<a href="../mandelbrot.html" th:href="@{/mandelbrot}">Create</a>
 				</li>
-				<li th:class="${execInfo.templateName} == 'about'? 'active'">
+				<li th:class="${#execInfo.templateName} == 'about'? 'active'">
 					<a href="../about.html" th:href="@{/about}">About</a>
 				</li>
 			</ul>

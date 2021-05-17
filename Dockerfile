@@ -1,9 +1,7 @@
-FROM errordeveloper/oracle-jre
+FROM adoptopenjdk/openjdk11:alpine-jre
 MAINTAINER Ingo Weichsel
 RUN mkdir /data
-ADD hello-ingo/target/hello-ingo-1.0-SNAPSHOT.war /data/
-#RUN mkdir /data/neo4j.db
-#ADD neo4j.db /data/neo4j.db/
+ADD hello-ingo/target/hello-ingo-1.0-SNAPSHOT.jar /data/
 EXPOSE 8080
 ENTRYPOINT [ "java" ]
-CMD [ "-Dneo4jData=/data/neo4j.db", "-Xms400m", "-Xmx400m",  "-jar", "/data/hello-ingo-1.0-SNAPSHOT.war" ]
+CMD [ "-Xms400m", "-Xmx400m",  "-jar", "/data/hello-ingo-1.0-SNAPSHOT.jar" ]

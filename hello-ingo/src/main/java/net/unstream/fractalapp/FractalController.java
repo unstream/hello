@@ -170,14 +170,14 @@ public class FractalController implements InitializingBean {
     }
 
 	/**
-	 * Retrieve an image thumpnail from the database.
+	 * Retrieve an image thumbnail from the database.
 	 * @param id fractal id
 	 * @return PNG image
 	 */
-	@RequestMapping(value = "/thumpnail", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(value = "/thumbnail", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
 	@Transactional(readOnly=true)
-	public byte[] thumpnail(String id) {
+	public byte[] thumbnail(String id) {
 		byte[] img = null;
 		img = fractalService.findById(id).getThumbnail().getImage();
 		//img = fractalService.findImageById(id).getImage();
