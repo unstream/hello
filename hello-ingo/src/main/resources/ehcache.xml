@@ -5,7 +5,7 @@
 
 	<cache alias="bigfractals">
 		<key-type>java.lang.String</key-type>
-		<value-type>java.lang.String</value-type>
+		<value-type>byte[]</value-type>
 		<resources>
 			<heap unit="entries">100</heap>
 			<offheap unit="MB">100</offheap>
